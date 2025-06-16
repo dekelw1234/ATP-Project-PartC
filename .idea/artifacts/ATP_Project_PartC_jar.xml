@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact name="ATP-Project-PartC:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ATP_Project_PartC_jar</output-path>
+    <root id="root">
+      <element id="archive" name="ATP-Project-PartC.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/../ATP-Project-PartB/out/artifacts/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="ATP-Project-PartC" />
+      </element>
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-fxml:16" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-controls:16" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-graphics:win:16" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-graphics:16" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-base:win:16" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-base:16" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-fxml:win:16" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-controls:win:16" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="View.WelcomeController">
+    <center>
+        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 30;">
+            <Label text="ברוך הבא למבצע 'איראן'" />
+            <HBox spacing="10" alignment="CENTER">
+                <Label text="שורות:"/>
+                <TextField fx:id="rowsField" promptText="מינימום 10"/>
+                <Label text="עמודות:"/>
+                <TextField fx:id="colsField" promptText="מינימום 10"/>
+            </HBox>
+            <Button text="התחל" onAction="#onStartClicked"/>
+            <Label fx:id="errorLabel" textFill="red"/>
+        </VBox>
+    </center>
+</BorderPane>

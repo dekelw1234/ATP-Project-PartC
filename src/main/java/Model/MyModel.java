@@ -1,6 +1,7 @@
 // === Model/MyModel.java ===
 package Model;
 
+import View.IView;
 import algorithms.mazeGenerators.*;
 import algorithms.search.*;
 
@@ -11,6 +12,10 @@ public class MyModel implements IModel {
     private Position startPosition;
     private Position goalPosition;
     private List<AState> solutionPath;
+    private IView view;
+    private Position currentPosition;
+
+
 
 
     @Override
@@ -19,6 +24,7 @@ public class MyModel implements IModel {
         currentMaze = generator.generate(rows, cols);
         startPosition = currentMaze.getStartPosition();
         goalPosition = currentMaze.getGoalPosition();
+        currentPosition = currentMaze.getStartPosition();
         System.out.println("Maze generated with size: " + rows + "x" + cols);
     }
 
@@ -29,12 +35,11 @@ public class MyModel implements IModel {
         ISearchable searchableMaze = new SearchableMaze(currentMaze);
         Solution solution = searcher.solve(searchableMaze);
         solutionPath = solution.getSolutionPath();
+        if (view != null) {
+            view.onMazeSolved();
+        }
     }
 
-    @Override
-    public void moveCharacter(String direction) {
-        // TODO: update position based on direction
-    }
 
     @Override
     public void setCharacterPosition(int row, int col) {
@@ -71,5 +76,49 @@ public class MyModel implements IModel {
         this.startPosition = maze.getStartPosition();
         this.goalPosition = maze.getGoalPosition();
     }
+
+    public void setView(IView view) {
+        this.view = view;
+    }
+
+    public void moveCharacter(String direction) {
+        if (currentPosition == null || currentMaze == null) return;
+
+        int row = currentPosition.getRowIndex();
+        int col = currentPosition.getColumnIndex();
+
+        switch (direction) {
+            case "UP": row--; break;
+            case "DOWN": row++; break;
+            case "LEFT": col--; break;
+            case "RIGHT": col++; break;
+            case "UP_LEFT": row--; col--; break;
+            case "UP_RIGHT": row--; col++; break;
+            case "DOWN_LEFT": row++; col--; break;
+            case "DOWN_RIGHT": row++; col++; break;
+        }
+
+
+        if (isValidPosition(row, col)) {
+            currentPosition = new Position(row, col);
+            if (view != null) view.displayMaze(currentMaze.getMaze());
+        }
+    }
+    private boolean isValidPosition(int row, int col) {
+        return row >= 0 && col >= 0 &&
+                row < currentMaze.getMaze().length &&
+                col < currentMaze.getMaze()[0].length &&
+                currentMaze.getMaze()[row][col] == 0;
+    }
+
+    @Override
+    public Position getCurrentPosition() {
+        return currentPosition;
+    }
+
+
+
+
+
 
 }

@@ -1,8 +1,8 @@
-// === View/MyViewController.java ===
 package View;
 
 import ViewModel.MyViewModel;
 import algorithms.mazeGenerators.Maze;
+import algorithms.mazeGenerators.Position;
 import algorithms.search.AState;
 import algorithms.search.MazeState;
 import javafx.event.ActionEvent;
@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -22,6 +24,9 @@ import java.util.List;
 public class MyViewController implements IView {
     private MyViewModel viewModel;
 
+    @FXML private TextField rowsInput;
+    @FXML private TextField colsInput;
+
     @FXML
     private Pane mazeDisplay;
 
@@ -30,12 +35,16 @@ public class MyViewController implements IView {
 
     private Canvas canvas;
 
-    public void setViewModel(MyViewModel vm) {
-        this.viewModel = vm;
+    @FXML
+    public void initialize() {
         this.canvas = new Canvas();
         mazeDisplay.getChildren().add(canvas);
         canvas.widthProperty().bind(mazeDisplay.widthProperty());
         canvas.heightProperty().bind(mazeDisplay.heightProperty());
+    }
+
+    public void setViewModel(MyViewModel vm) {
+        this.viewModel = vm;
     }
 
     @FXML
@@ -122,14 +131,42 @@ public class MyViewController implements IView {
 
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
+        // רקע המבוך
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[i].length; j++) {
-                if (maze[i][j] == 1) {
-                    gc.setFill(Color.BLACK);
-                } else {
-                    gc.setFill(Color.WHITE);
-                }
+                gc.setFill(maze[i][j] == 1 ? Color.BLACK : Color.WHITE);
                 gc.fillRect(j * cellWidth, i * cellHeight, cellWidth, cellHeight);
+            }
+        }
+
+        // ציור הכור
+        try {
+            Image coreImage = new Image(getClass().getResourceAsStream("/images/core.png"));
+            int goalRow = viewModel.getGoalPosition()[0];
+            int goalCol = viewModel.getGoalPosition()[1];
+            gc.drawImage(coreImage, goalCol * cellWidth, goalRow * cellHeight, cellWidth, cellHeight);
+        } catch (Exception e) {
+            System.err.println("❌ לא נמצא core.png");
+        }
+
+        // ציור המטוס
+        try {
+            Position pos = viewModel.getCurrentPosition();
+            if (pos != null) {
+                Image planeImage = new Image(getClass().getResourceAsStream("/images/plane.png"));
+                gc.drawImage(planeImage,
+                        pos.getColumnIndex() * cellWidth,
+                        pos.getRowIndex() * cellHeight,
+                        cellWidth, cellHeight);
+            }
+        } catch (Exception e) {
+            System.err.println("❌ לא נמצא plane.png – מצייר עיגול במקום:");
+            Position pos = viewModel.getCurrentPosition();
+            if (pos != null) {
+                gc.setFill(Color.DEEPSKYBLUE);
+                gc.fillOval(pos.getColumnIndex() * cellWidth,
+                        pos.getRowIndex() * cellHeight,
+                        cellWidth, cellHeight);
             }
         }
     }
@@ -145,7 +182,7 @@ public class MyViewController implements IView {
         gc.setFill(Color.LIGHTGREEN);
         for (AState state : path) {
             if (state instanceof MazeState) {
-                String[] coords = ((MazeState) state).getStateName().split(",");
+                String[] coords = ((MazeState) state).getStateView().split(",");
                 int row = Integer.parseInt(coords[0]);
                 int col = Integer.parseInt(coords[1]);
                 gc.fillRect(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
@@ -155,6 +192,26 @@ public class MyViewController implements IView {
 
     @Override
     public void onMazeSolved() {
-        // TODO: indicate solution to user
+        displayMaze(viewModel.getMaze());
+        drawSolution(viewModel.getSolutionPath());
+        statusLabel.setText("הפתרון הוצג בהצלחה");
+    }
+
+    @FXML
+    public void onGenerateMazeCustom(ActionEvent event) {
+        try {
+            int rows = Integer.parseInt(rowsInput.getText());
+            int cols = Integer.parseInt(colsInput.getText());
+
+            viewModel.setRows(rows);
+            viewModel.setCols(cols);
+            viewModel.generateMaze();
+
+            displayMaze(viewModel.getMaze());
+            statusLabel.setText("מבוך נוצר בהצלחה!");
+
+        } catch (NumberFormatException e) {
+            statusLabel.setText("שגיאה: יש להזין מספרים תקינים לשורות ועמודות.");
+        }
     }
 }

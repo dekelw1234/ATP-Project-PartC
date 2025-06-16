@@ -1,7 +1,6 @@
 package Model;
-
-
 import algorithms.mazeGenerators.Maze;
+import algorithms.mazeGenerators.Position;
 import algorithms.search.AState;
 
 import java.util.List;
@@ -17,6 +16,8 @@ public interface IModel {
     List<AState> getSolutionPath();
     Maze getMazeObject();
     void setMaze(Maze maze);
+    Position getCurrentPosition();
 
 
-}
+
+    }

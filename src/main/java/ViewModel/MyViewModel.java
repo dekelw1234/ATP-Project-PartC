@@ -3,6 +3,7 @@ package ViewModel;
 
 import Model.IModel;
 import algorithms.mazeGenerators.Maze;
+import algorithms.mazeGenerators.Position;
 import algorithms.search.AState;
 
 import javafx.beans.property.*;
@@ -22,13 +23,17 @@ public class MyViewModel {
         model.generateMaze(getRows(), getCols());
     }
 
+    public void generateMaze(int rows, int cols) {
+        setRows(rows);
+        setCols(cols);
+        model.generateMaze(rows, cols);
+    }
+
+
     public void solveMaze() {
         model.solveMaze();
     }
 
-    public void moveCharacter(String direction) {
-        model.moveCharacter(direction);
-    }
 
     public int[][] getMaze() {
         return model.getMaze();
@@ -69,4 +74,21 @@ public class MyViewModel {
     public IntegerProperty colsProperty() {
         return cols;
     }
+
+    public void moveCharacter(String direction) {
+        model.moveCharacter(direction);
+    }
+
+    public Position getCurrentPosition() {
+        return model.getCurrentPosition();
+    }
+
+    public int[] getGoalPosition() {
+        return model.getGoalPosition();
+    }
+
+
+
+
+
 }
