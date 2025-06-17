@@ -7,8 +7,13 @@ import algorithms.search.AState;
 import algorithms.search.MazeState;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -17,9 +22,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Node;
-
 import java.io.*;
 import java.util.List;
+import javafx.scene.media.AudioClip;
+
 
 public class MyViewController implements IView {
     private MyViewModel viewModel;
@@ -30,10 +36,15 @@ public class MyViewController implements IView {
     @FXML
     private Pane mazeDisplay;
 
+
+    private AudioClip backgroundMusic;
     @FXML
     private Label statusLabel;
 
     private Canvas canvas;
+    private boolean showingSolution = false;
+    private boolean isSolutionVisible = false;
+
 
     @FXML
     public void initialize() {
@@ -45,7 +56,7 @@ public class MyViewController implements IView {
         // הפיכת הקנבס לפוקוסבילי
         canvas.setFocusTraversable(true);
         canvas.requestFocus();
-
+        startBackgroundMusic();
         // האזנה ללחיצות מקשים
         canvas.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -144,23 +155,23 @@ public class MyViewController implements IView {
 
     @Override
     public void displayMaze(int[][] maze) {
-        System.out.println("displayMaze() called");
-        System.out.println("rows = " + maze.length);
-        System.out.println("cols = " + (maze.length > 0 ? maze[0].length : 0));
-
         if (maze == null || maze.length == 0) return;
 
         javafx.application.Platform.runLater(() -> {
+            System.out.println("displayMaze() called");
+            System.out.println("rows = " + maze.length);
+            System.out.println("cols = " + (maze.length > 0 ? maze[0].length : 0));
+
             GraphicsContext gc = canvas.getGraphicsContext2D();
             double cellHeight = canvas.getHeight() / maze.length;
             double cellWidth = canvas.getWidth() / maze[0].length;
 
             gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-            // ציור תאי המבוך
+            // ציור תאי המבוך עם קירות שקופים
             for (int i = 0; i < maze.length; i++) {
                 for (int j = 0; j < maze[i].length; j++) {
-                    gc.setFill(maze[i][j] == 1 ? Color.BLACK : Color.WHITE);
+                    gc.setFill(maze[i][j] == 1 ? Color.rgb(0, 0, 0, 0.4) : Color.TRANSPARENT);
                     gc.fillRect(j * cellWidth, i * cellHeight, cellWidth, cellHeight);
                 }
             }
@@ -195,8 +206,28 @@ public class MyViewController implements IView {
                             cellWidth, cellHeight);
                 }
             }
+
+            // פתרון
+            if (isSolutionVisible && viewModel.getSolutionPath() != null) {
+                drawSolution(viewModel.getSolutionPath());
+            }
+
+            // בדיקת ניצחון
+            if (viewModel.getCurrentPosition() != null &&
+                    viewModel.getGoalPosition() != null) {
+                Position current = viewModel.getCurrentPosition();
+                int[] goal = viewModel.getGoalPosition();
+                if (current.getRowIndex() == goal[0] && current.getColumnIndex() == goal[1]) {
+                    showVictoryCelebration(goal[0], goal[1]);
+                }
+            }
+
+            canvas.requestFocus();
         });
     }
+
+
+
 
     private void drawSolution(List<AState> path) {
         if (path == null || path.isEmpty()) return;
@@ -210,8 +241,8 @@ public class MyViewController implements IView {
         for (AState state : path) {
             if (state instanceof MazeState) {
                 String[] coords = ((MazeState) state).getStateView().split(",");
-                int row = Integer.parseInt(coords[0]);
-                int col = Integer.parseInt(coords[1]);
+                int row = Integer.parseInt(coords[0].replaceAll("[^\\d]", ""));
+                int col = Integer.parseInt(coords[1].replaceAll("[^\\d]", ""));
                 gc.fillRect(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
             }
         }
@@ -246,5 +277,163 @@ public class MyViewController implements IView {
         if (canvas != null)
             canvas.requestFocus();
     }
+
+    @FXML
+    public void onHelp() {
+        String message = """
+        🚀 מקשי שליטה:
+        NUMPAD8 – למעלה
+        NUMPAD2 – למטה
+        NUMPAD4 – שמאלה
+        NUMPAD6 – ימינה
+        NUMPAD7/9/1/3 – תנועה אלכסונית
+
+        🖱️ תפריטים:
+        - טען/שמור מבוך
+        - פתרון אוטומטי
+        - יציאה מהמשחק
+        """;
+
+        showPopup("הוראות שימוש", message);
+    }
+
+    @FXML
+    public void onAbout() {
+        String message = """
+        אפליקציית מבוך גרעיני
+       
+        מטרתך: למצוא את הכור האיראני ולהשמיד אותו!
+        בהצלחה במבצע 💣✈️
+        """;
+
+        showPopup("אודות", message);
+    }
+
+    private void showPopup(String title, String content) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+
+    private void showVictoryCelebration(int row, int col) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        double cellHeight = canvas.getHeight() / viewModel.getMaze().length;
+        double cellWidth = canvas.getWidth() / viewModel.getMaze()[0].length;
+
+        try {
+            Image boom = new Image(getClass().getResourceAsStream("/images/explosion.png"));
+            gc.drawImage(boom, col * cellWidth, row * cellHeight, cellWidth, cellHeight);
+        } catch (Exception e) {
+            System.err.println("❌ לא נמצא explosion.png");
+        }
+
+        try {
+            Image flag = new Image(getClass().getResourceAsStream("/images/israel.png"));
+            gc.drawImage(flag, canvas.getWidth() / 2 - 50, canvas.getHeight() / 2 - 50, 400, 200);
+        } catch (Exception e) {
+            System.err.println("❌ לא נמצא israel.png");
+        }
+        try {
+            AudioClip victory = new AudioClip(getClass().getResource("/sounds/victory.mp3").toExternalForm());
+            victory.play();
+        } catch (Exception e) {
+            System.err.println("⚠️ שגיאה בסאונד ניצחון");
+        }
+
+
+        // ✅ תיבת ברכה + "שחק שוב"
+        javafx.application.Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("המשימה הושלמה!");
+            alert.setHeaderText("כל הכבוד! 🎉");
+            alert.setContentText("פתרת את המבוך בהצלחה\nועזרת לישראל להשמיד את הכור הגרעיני של איראן!\nאין עלייך שומר ישראל! ");
+
+            ButtonType replayBtn = new ButtonType("שחק שוב");
+            alert.getButtonTypes().setAll(replayBtn);
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == replayBtn) {
+                    returnToWelcomeScreen();
+                }
+            });
+        });
+    }
+
+    private void returnToWelcomeScreen() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Welcome.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) canvas.getScene().getWindow();
+            stage.setScene(new Scene(root, 400, 250));
+            stage.setTitle("ברוך הבא למשימת השמדת הכור!");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("⚠️ שגיאה בטעינת Welcome.fxml");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void onHoverSolve() {
+        if (viewModel.getSolutionPath() == null) {
+            statusLabel.setText("⚠️ אין פתרון עדיין");
+            return;
+        }
+
+        showingSolution = true;
+
+        javafx.application.Platform.runLater(() -> {
+            displayMaze(viewModel.getMaze()); // זה כבר יגרום ל־drawSolution אם showingSolution == true
+            statusLabel.setText("מציג פתרון זמני...");
+        });
+    }
+
+
+
+    @FXML
+    public void onLeaveSolve() {
+        showingSolution = false;
+
+        javafx.application.Platform.runLater(() -> {
+            displayMaze(viewModel.getMaze());
+            statusLabel.setText("חזרה למבוך הרגיל");
+        });
+    }
+
+    @FXML
+    public void onToggleSolve() {
+        if (viewModel.getSolutionPath() == null) {
+            statusLabel.setText("⚠️ עדיין אין פתרון. לחץ על 'פתור' קודם.");
+            return;
+        }
+
+        isSolutionVisible = !isSolutionVisible;
+
+        displayMaze(viewModel.getMaze()); // יגרום לציור מחדש
+
+        statusLabel.setText(isSolutionVisible ? "מציג פתרון" : "פתרון הוסר");
+    }
+
+
+    public void startBackgroundMusic() {
+        try {
+            backgroundMusic = new AudioClip(getClass().getResource("/sounds/bg_music.mp3").toExternalForm());
+            backgroundMusic.setCycleCount(AudioClip.INDEFINITE); // לולאה
+            backgroundMusic.play();
+        } catch (Exception e) {
+            System.err.println("⚠️ שגיאה בהשמעת מוזיקת רקע");
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
 
 }

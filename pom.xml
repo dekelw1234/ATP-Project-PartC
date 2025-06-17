@@ -8,8 +8,6 @@
     <artifactId>MazeApp</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>15</maven.compiler.source>
@@ -18,7 +16,7 @@
     </properties>
 
     <dependencies>
-
+        <!-- קובץ JAR של חלק ב -->
         <dependency>
             <groupId>com.myproject</groupId>
             <artifactId>ATPProjectJAR</artifactId>
@@ -38,9 +36,12 @@
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
     </dependencies>
-
-
 
     <build>
         <plugins>

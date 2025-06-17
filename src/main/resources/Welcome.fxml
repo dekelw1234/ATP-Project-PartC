@@ -1,20 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="View.WelcomeController">
-    <center>
-        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 30;">
-            <Label text="ברוך הבא למבצע 'איראן'" />
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="View.WelcomeController"
+            style="-fx-background-color: linear-gradient(to bottom, #0d47a1, #1976d2);">
+
+    <VBox spacing="15" alignment="CENTER"
+          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+
+        <!-- לוגו -->
+        <ImageView fitHeight="100" preserveRatio="true">
+            <image>
+                <Image url="@/images/logo.png"/>
+            </image>
+        </ImageView>
+
+        <!-- כותרת -->
+        <Label text="ברוך הבא למבצע השמדת הכור!"
+               style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+        <!-- שדות קלט -->
+        <VBox spacing="10" alignment="CENTER">
+            <Label text="הכנס את גודל המבוך:" style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+
             <HBox spacing="10" alignment="CENTER">
-                <Label text="שורות:"/>
-                <TextField fx:id="rowsField" promptText="מינימום 10"/>
-                <Label text="עמודות:"/>
-                <TextField fx:id="colsField" promptText="מינימום 10"/>
+                <Label text="שורות:" style="-fx-text-fill: white;"/>
+                <TextField fx:id="rowsInput" promptText="למשל: 15" />
+
+                <Label text="עמודות:" style="-fx-text-fill: white;"/>
+                <TextField fx:id="colsInput" promptText="למשל: 15" />
             </HBox>
-            <Button text="התחל" onAction="#onStartClicked"/>
-            <Label fx:id="errorLabel" textFill="red"/>
         </VBox>
-    </center>
-</BorderPane>
+
+        <!-- שורת שגיאה -->
+        <Label fx:id="errorLabel" text="" style="-fx-text-fill: yellow; -fx-font-size: 14px;"/>
+
+        <!-- כפתור התחל -->
+        <Button text="🚀 התחל!" onAction="#onStartClicked"
+                style="-fx-font-size: 16px; -fx-background-color: white; -fx-text-fill: #0d47a1; -fx-font-weight: bold;"/>
+    </VBox>
+</AnchorPane>

@@ -2,33 +2,76 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="View.MyViewController">
+
     <top>
-        <VBox>
+        <VBox spacing="5">
             <MenuBar>
-                <Menu text="File">
-                    <MenuItem text="Save" onAction="#onSaveMaze" />
-                    <MenuItem text="Load" onAction="#onLoadMaze" />
+                <Menu text="קובץ">
+                    <MenuItem text="חדש מבוך" onAction="#onGenerateMazeCustom" />
+                    <MenuItem text="טען מבוך" onAction="#onLoadMaze" />
+                    <MenuItem text="שמור מבוך" onAction="#onSaveMaze" />
                     <SeparatorMenuItem />
-                    <MenuItem text="Exit" onAction="#onExit" />
+                    <MenuItem text="יציאה" onAction="#onExit" />
+                </Menu>
+                <Menu text="עזרה">
+                    <MenuItem text="עזרה" onAction="#onHelp"/>
+                    <MenuItem text="אודות" onAction="#onAbout"/>
                 </Menu>
             </MenuBar>
+
             <ToolBar>
-                <Button text="פתור מבוך" onAction="#onSolveMaze" />
-                <Button text="שמור" onAction="#onSaveMaze" />
-                <Button text="טען" onAction="#onLoadMaze" />
+                <Button onAction="#onLoadMaze">
+                    <graphic>
+                        <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                            <Image url="@/icons/load.png"/>
+                        </ImageView>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="טען מבוך"/>
+                    </tooltip>
+                </Button>
+
+                <Button onAction="#onSaveMaze">
+                    <graphic>
+                        <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                            <Image url="@/icons/save.png"/>
+                        </ImageView>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="שמור מבוך"/>
+                    </tooltip>
+                </Button>
+
+                <Button fx:id="solveButton" onAction="#onToggleSolve">
+                    <graphic>
+                        <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                            <Image url="@/icons/solve.png"/>
+                        </ImageView>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="הצג / הסתר פתרון"/>
+                    </tooltip>
+                </Button>
             </ToolBar>
         </VBox>
     </top>
+
     <center>
-        <Pane fx:id="mazeDisplay" style="-fx-background-color: #e0e0e0"/>
+        <Pane fx:id="mazeDisplay"
+              style="-fx-background-image: url('/images/maze_background.jpg');
+                     -fx-background-size: cover;
+                     -fx-background-position: center center;
+                     -fx-background-repeat: no-repeat;
+                     -fx-background-color: transparent;" />
     </center>
+
     <bottom>
-        <Label fx:id="statusLabel" text="בהצלחה במבצע!">
-            <padding>
-                <Insets top="10" bottom="10" left="10" right="10"/>
-            </padding>
-        </Label>
+        <Label fx:id="statusLabel" text="בהצלחה במבצע!"
+               style="-fx-font-size: 14px; -fx-padding: 10; -fx-text-fill: darkgreen;" />
     </bottom>
+
 </BorderPane>

@@ -23,6 +23,7 @@ public class MyModel implements IModel {
 
 
 
+
     @Override
     public void generateMaze(int rows, int cols) {
         try {
@@ -69,6 +70,10 @@ public class MyModel implements IModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // מבקש פתרון מיד אחרי יצירת המבוך
+        new Thread(() -> solveMazeSilently()).start();
+
     }
 
 
@@ -187,6 +192,42 @@ public class MyModel implements IModel {
     public Position getCurrentPosition() {
         return currentPosition;
     }
+
+    private void solveMazeSilently() {
+        if (currentMaze == null) return;
+
+        try {
+            Client client = new Client(InetAddress.getLocalHost(), 5401, new IClientStrategy() {
+                @Override
+                public void clientStrategy(InputStream inFromServer, OutputStream outToServer) {
+                    try {
+                        ObjectOutputStream toServer = new ObjectOutputStream(outToServer);
+                        ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
+
+                        toServer.flush();
+                        toServer.writeObject(currentMaze);
+                        toServer.flush();
+
+                        Solution solution = (Solution) fromServer.readObject();
+                        solutionPath = solution.getSolutionPath();
+
+                        System.out.println("✔ פתרון ברקע נטען: " + solutionPath.size() + " צעדים");
+
+                    } catch (Exception e) {
+                        System.err.println("❌ שגיאה בקבלת פתרון מהשרת (רקע)");
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            client.communicateWithServer();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 
 

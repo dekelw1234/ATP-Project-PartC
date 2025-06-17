@@ -2,25 +2,25 @@ package View;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
 import Model.MyModel;
 import ViewModel.MyViewModel;
 
 public class WelcomeController {
 
-    @FXML private TextField rowsField;
-    @FXML private TextField colsField;
+    @FXML private TextField rowsInput;
+    @FXML private TextField colsInput;
     @FXML private Label errorLabel;
 
     @FXML
     public void onStartClicked(ActionEvent event) {
         try {
-            int rows = Integer.parseInt(rowsField.getText());
-            int cols = Integer.parseInt(colsField.getText());
+            int rows = Integer.parseInt(rowsInput.getText());
+            int cols = Integer.parseInt(colsInput.getText());
 
             if (rows < 10 || cols < 10) {
                 errorLabel.setText("שגיאה: יש להזין לפחות 10 שורות ועמודות.");
@@ -39,17 +39,16 @@ public class WelcomeController {
             model.setView(controller);
             controller.setViewModel(viewModel);
 
-            // צור את המבוך עם שוליים
+            // צור את המבוך
             viewModel.generateMaze(rows, cols);
-            controller.displayMaze(viewModel.getMaze()); // ← זו השורה החסרה
+            controller.displayMaze(viewModel.getMaze());
             controller.requestFocusOnCanvas();
 
-
-
+            // הצג את הסצנה
             Stage stage = (Stage)((Button)event.getSource()).getScene().getWindow();
             Scene gameScene = new Scene(root, 800, 600);
 
-            // תמיכה בקיצורי מקשים
+            // קיצורי מקשים לתנועה
             gameScene.setOnKeyPressed(e -> {
                 switch (e.getCode()) {
                     case UP, NUMPAD8 -> viewModel.moveCharacter("UP");
@@ -64,11 +63,12 @@ public class WelcomeController {
             });
 
             stage.setScene(gameScene);
+
         } catch (NumberFormatException e) {
-            errorLabel.setText("שגיאה: הקלט חייב להיות מספרים בלבד.");
+            errorLabel.setText("שגיאה: יש להזין מספרים תקינים בלבד.");
         } catch (Exception e) {
             e.printStackTrace();
-            errorLabel.setText("שגיאה פנימית. נסה שוב.");
+            errorLabel.setText("שגיאה פנימית בטעינת המשחק.");
         }
     }
 }
