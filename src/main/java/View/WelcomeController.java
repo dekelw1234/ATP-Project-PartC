@@ -42,6 +42,8 @@ public class WelcomeController {
             // צור את המבוך עם שוליים
             viewModel.generateMaze(rows, cols);
             controller.displayMaze(viewModel.getMaze()); // ← זו השורה החסרה
+            controller.requestFocusOnCanvas();
+
 
 
             Stage stage = (Stage)((Button)event.getSource()).getScene().getWindow();

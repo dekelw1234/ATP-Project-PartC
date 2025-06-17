@@ -1,10 +1,15 @@
 // === Model/MyModel.java ===
 package Model;
+import Client.Client;
+import Client.IClientStrategy;
 
+import IO.MyDecompressorInputStream;
 import View.IView;
 import algorithms.mazeGenerators.*;
 import algorithms.search.*;
 
+import java.io.*;
+import java.net.InetAddress;
 import java.util.List;
 
 public class MyModel implements IModel {
@@ -20,25 +25,92 @@ public class MyModel implements IModel {
 
     @Override
     public void generateMaze(int rows, int cols) {
-        IMazeGenerator generator = new MyMazeGenerator();
-        currentMaze = generator.generate(rows, cols);
-        startPosition = currentMaze.getStartPosition();
-        goalPosition = currentMaze.getGoalPosition();
-        currentPosition = currentMaze.getStartPosition();
-        System.out.println("Maze generated with size: " + rows + "x" + cols);
+        try {
+            Client client = new Client(InetAddress.getLocalHost(), 5400, new IClientStrategy() {
+                @Override
+                public void clientStrategy(InputStream inFromServer, OutputStream outToServer) {
+                    try {
+                        ObjectOutputStream toServer = new ObjectOutputStream(outToServer);
+                        ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
+
+                        // שליחת ממדי המבוך לשרת
+                        toServer.flush();
+                        int[] mazeDimensions = new int[]{rows, cols};
+                        toServer.writeObject(mazeDimensions);
+                        toServer.flush();
+
+                        // קבלת המבוך הדחוס
+                        byte[] compressedMaze = (byte[]) fromServer.readObject();
+
+                        // פענוח המבוך
+                        InputStream is = new MyDecompressorInputStream(new ByteArrayInputStream(compressedMaze));
+                        byte[] decompressed = new byte[rows * cols + 100]; // חשוב: מספיק גודל
+
+                        is.read(decompressed);
+                        currentMaze = new Maze(decompressed);
+                        System.out.println("Maze content:");
+                        currentMaze.print();
+
+
+                        // עדכון מצב
+                        startPosition = currentMaze.getStartPosition();
+                        goalPosition = currentMaze.getGoalPosition();
+                        currentPosition = currentMaze.getStartPosition();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            client.communicateWithServer();
+            System.out.println("Maze generated from server: " + rows + "x" + cols);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
 
     @Override
     public void solveMaze() {
-        if (currentMaze == null) return;
-        ISearchingAlgorithm searcher = new BestFirstSearch();
-        ISearchable searchableMaze = new SearchableMaze(currentMaze);
-        Solution solution = searcher.solve(searchableMaze);
-        solutionPath = solution.getSolutionPath();
-        if (view != null) {
-            view.onMazeSolved();
+        if (currentMaze == null)
+            return;
+
+        try {
+            Client client = new Client(InetAddress.getLocalHost(), 5401, new IClientStrategy() {
+                @Override
+                public void clientStrategy(InputStream inFromServer, OutputStream outToServer) {
+                    try {
+                        ObjectOutputStream toServer = new ObjectOutputStream(outToServer);
+                        ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
+
+                        // שליחת המבוך לשרת
+                        toServer.flush();
+                        toServer.writeObject(currentMaze);
+                        toServer.flush();
+
+                        // קבלת פתרון
+                        Solution solution = (Solution) fromServer.readObject();
+                        solutionPath = solution.getSolutionPath();
+
+                        if (view != null) {
+                            view.onMazeSolved(); // אפשרות לדווח ל-GUI
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            client.communicateWithServer();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
 
 
     @Override

@@ -41,7 +41,28 @@ public class MyViewController implements IView {
         mazeDisplay.getChildren().add(canvas);
         canvas.widthProperty().bind(mazeDisplay.widthProperty());
         canvas.heightProperty().bind(mazeDisplay.heightProperty());
+
+        // הפיכת הקנבס לפוקוסבילי
+        canvas.setFocusTraversable(true);
+        canvas.requestFocus();
+
+        // האזנה ללחיצות מקשים
+        canvas.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case NUMPAD8 -> viewModel.moveCharacter("UP");
+                case NUMPAD2 -> viewModel.moveCharacter("DOWN");
+                case NUMPAD4 -> viewModel.moveCharacter("LEFT");
+                case NUMPAD6 -> viewModel.moveCharacter("RIGHT");
+                case NUMPAD7 -> viewModel.moveCharacter("UP_LEFT");
+                case NUMPAD9 -> viewModel.moveCharacter("UP_RIGHT");
+                case NUMPAD1 -> viewModel.moveCharacter("DOWN_LEFT");
+                case NUMPAD3 -> viewModel.moveCharacter("DOWN_RIGHT");
+            }
+
+            displayMaze(viewModel.getMaze()); // ציור מחודש של המבוך והדמות
+        });
     }
+
 
     public void setViewModel(MyViewModel vm) {
         this.viewModel = vm;
@@ -123,52 +144,58 @@ public class MyViewController implements IView {
 
     @Override
     public void displayMaze(int[][] maze) {
+        System.out.println("displayMaze() called");
+        System.out.println("rows = " + maze.length);
+        System.out.println("cols = " + (maze.length > 0 ? maze[0].length : 0));
+
         if (maze == null || maze.length == 0) return;
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        double cellHeight = canvas.getHeight() / maze.length;
-        double cellWidth = canvas.getWidth() / maze[0].length;
+        javafx.application.Platform.runLater(() -> {
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+            double cellHeight = canvas.getHeight() / maze.length;
+            double cellWidth = canvas.getWidth() / maze[0].length;
 
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        // רקע המבוך
-        for (int i = 0; i < maze.length; i++) {
-            for (int j = 0; j < maze[i].length; j++) {
-                gc.setFill(maze[i][j] == 1 ? Color.BLACK : Color.WHITE);
-                gc.fillRect(j * cellWidth, i * cellHeight, cellWidth, cellHeight);
+            // ציור תאי המבוך
+            for (int i = 0; i < maze.length; i++) {
+                for (int j = 0; j < maze[i].length; j++) {
+                    gc.setFill(maze[i][j] == 1 ? Color.BLACK : Color.WHITE);
+                    gc.fillRect(j * cellWidth, i * cellHeight, cellWidth, cellHeight);
+                }
             }
-        }
 
-        // ציור הכור
-        try {
-            Image coreImage = new Image(getClass().getResourceAsStream("/images/core.png"));
-            int goalRow = viewModel.getGoalPosition()[0];
-            int goalCol = viewModel.getGoalPosition()[1];
-            gc.drawImage(coreImage, goalCol * cellWidth, goalRow * cellHeight, cellWidth, cellHeight);
-        } catch (Exception e) {
-            System.err.println("❌ לא נמצא core.png");
-        }
+            // ציור הכור
+            try {
+                Image coreImage = new Image(getClass().getResourceAsStream("/images/core.png"));
+                int goalRow = viewModel.getGoalPosition()[0];
+                int goalCol = viewModel.getGoalPosition()[1];
+                gc.drawImage(coreImage, goalCol * cellWidth, goalRow * cellHeight, cellWidth, cellHeight);
+            } catch (Exception e) {
+                System.err.println("❌ לא נמצא core.png");
+            }
 
-        // ציור המטוס
-        try {
-            Position pos = viewModel.getCurrentPosition();
-            if (pos != null) {
-                Image planeImage = new Image(getClass().getResourceAsStream("/images/plane.png"));
-                gc.drawImage(planeImage,
-                        pos.getColumnIndex() * cellWidth,
-                        pos.getRowIndex() * cellHeight,
-                        cellWidth, cellHeight);
+            // ציור המטוס
+            try {
+                Position pos = viewModel.getCurrentPosition();
+                if (pos != null) {
+                    Image planeImage = new Image(getClass().getResourceAsStream("/images/plane.png"));
+                    gc.drawImage(planeImage,
+                            pos.getColumnIndex() * cellWidth,
+                            pos.getRowIndex() * cellHeight,
+                            cellWidth, cellHeight);
+                }
+            } catch (Exception e) {
+                System.err.println("❌ לא נמצא plane.png – מצייר עיגול במקום:");
+                Position pos = viewModel.getCurrentPosition();
+                if (pos != null) {
+                    gc.setFill(Color.DEEPSKYBLUE);
+                    gc.fillOval(pos.getColumnIndex() * cellWidth,
+                            pos.getRowIndex() * cellHeight,
+                            cellWidth, cellHeight);
+                }
             }
-        } catch (Exception e) {
-            System.err.println("❌ לא נמצא plane.png – מצייר עיגול במקום:");
-            Position pos = viewModel.getCurrentPosition();
-            if (pos != null) {
-                gc.setFill(Color.DEEPSKYBLUE);
-                gc.fillOval(pos.getColumnIndex() * cellWidth,
-                        pos.getRowIndex() * cellHeight,
-                        cellWidth, cellHeight);
-            }
-        }
+        });
     }
 
     private void drawSolution(List<AState> path) {
@@ -214,4 +241,10 @@ public class MyViewController implements IView {
             statusLabel.setText("שגיאה: יש להזין מספרים תקינים לשורות ועמודות.");
         }
     }
+
+    public void requestFocusOnCanvas() {
+        if (canvas != null)
+            canvas.requestFocus();
+    }
+
 }
