@@ -1,5 +1,3 @@
-package View;
-
 import Server.Server;
 import Server.ServerStrategyGenerateMaze;
 import Server.ServerStrategySolveSearchProblem;

@@ -51,7 +51,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.5</version>
                 <configuration>
-                    <mainClass>View.GuiMain</mainClass>
+                    <mainClass>GuiMain</mainClass>
                 </configuration>
                 <executions>
                     <execution>

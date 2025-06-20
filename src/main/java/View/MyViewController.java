@@ -5,6 +5,7 @@ import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.AState;
 import algorithms.search.MazeState;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -95,11 +96,11 @@ public class MyViewController implements IView {
     }
 
     @FXML
-    public void onSaveMaze(ActionEvent event) {
+    public void onSaveMaze() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Maze");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Maze files", "*.maze"));
-        File file = fileChooser.showSaveDialog(getStage(event));
+        File file = fileChooser.showSaveDialog(getStage());
         if (file != null) {
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 byte[] mazeData = viewModel.getMazeObject().toByteArray();
@@ -111,12 +112,13 @@ public class MyViewController implements IView {
         }
     }
 
+
     @FXML
-    public void onLoadMaze(ActionEvent event) {
+    public void onLoadMaze() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Maze");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Maze files", "*.maze"));
-        File file = fileChooser.showOpenDialog(getStage(event));
+        File file = fileChooser.showOpenDialog(getStage());
         if (file != null) {
             try (FileInputStream fis = new FileInputStream(file);
                  ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
@@ -139,14 +141,20 @@ public class MyViewController implements IView {
         }
     }
 
+
     @FXML
-    public void onExit(ActionEvent event) {
-        getStage(event).close();
+    public void onExit() {
+        Platform.exit();     // סוגר את JavaFX Application Thread
+        System.exit(0);      // סוגר את JVM כולו (כולל Maven process)
     }
 
-    private Stage getStage(ActionEvent event) {
-        return (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+
+
+    private Stage getStage() {
+        return (Stage) mazeDisplay.getScene().getWindow();
     }
+
 
     @Override
     public void showAlert(String message) {
