@@ -1,0 +1,40 @@
+/* Root pane styling */
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: #2196F3;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: #1976D2;
+    -fx-text-fill: white;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4;
+}
+.button:hover {
+    -fx-background-color: #1565C0;
+}
+
+/* Labels */
+.label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 16px;
+}
+
+/* TextFields */
+.text-field {
+    -fx-border-color: #CCCCCC;
+    -fx-border-radius: 2;
+    -fx-padding: 4 8;
+}
+
+/* Specific panes */
+.vbox, .hbox {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+}
+
+.anchor-pane {
+    -fx-background-color: transparent;
+}

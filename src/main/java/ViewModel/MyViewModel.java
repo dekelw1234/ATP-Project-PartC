@@ -8,8 +8,10 @@ import algorithms.search.AState;
 
 import javafx.beans.property.*;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class MyViewModel {
+public class MyViewModel extends Observable implements Observer {
     private IModel model;
 
     private IntegerProperty rows = new SimpleIntegerProperty(10);
@@ -33,7 +35,6 @@ public class MyViewModel {
     public void solveMaze() {
         model.solveMaze();
     }
-
 
     public int[][] getMaze() {
         return model.getMaze();
@@ -88,7 +89,8 @@ public class MyViewModel {
     }
 
 
+    @Override
+    public void update(Observable o, Object arg) {
 
-
-
+    }
 }

@@ -4,7 +4,7 @@ import Client.Client;
 import Client.IClientStrategy;
 
 import IO.MyDecompressorInputStream;
-import View.IView;
+import View.*;
 import algorithms.mazeGenerators.*;
 import algorithms.search.*;
 
@@ -17,13 +17,14 @@ public class MyModel implements IModel {
     private Position startPosition;
     private Position goalPosition;
     private List<AState> solutionPath;
-    private IView view;
     private Position currentPosition;
 
 
 
-
-
+    /**
+     * Generates a new maze of the specified size by requesting it from the maze generation server.
+     * Also starts solving the maze in a background thread after generation.
+     */
     @Override
     public void generateMaze(int rows, int cols) {
         try {
@@ -76,7 +77,9 @@ public class MyModel implements IModel {
 
     }
 
-
+    /**
+     * Solves the current maze by sending it to the maze-solving server and retrieving the solution path.
+     */
     @Override
     public void solveMaze() {
         if (currentMaze == null)
@@ -99,9 +102,14 @@ public class MyModel implements IModel {
                         Solution solution = (Solution) fromServer.readObject();
                         solutionPath = solution.getSolutionPath();
 
+                        /*
                         if (view != null) {
                             view.onMazeSolved(); // אפשרות לדווח ל-GUI
                         }
+
+                         */
+
+
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -116,37 +124,58 @@ public class MyModel implements IModel {
         }
     }
 
-
-
+    /**
+     * Sets a custom starting position for the maze character (optional usage).
+     */
     @Override
     public void setCharacterPosition(int row, int col) {
         // Optional: set custom starting point
     }
 
+    /**
+     * Returns the current maze layout as a 2D integer array.
+     */
     @Override
     public int[][] getMaze() {
         return currentMaze != null ? currentMaze.getMaze() : new int[0][0];
     }
 
+
+    /**
+     * Retrieves the start position coordinates of the current maze.
+     */
     @Override
     public int[] getStartPosition() {
         return new int[]{startPosition.getRowIndex(), startPosition.getColumnIndex()};
     }
 
+    /**
+     * Retrieves the goal position coordinates of the current maze.
+     */
     @Override
     public int[] getGoalPosition() {
         return new int[]{goalPosition.getRowIndex(), goalPosition.getColumnIndex()};
     }
 
+    /**
+     * Returns the list of states representing the solution path for the maze.
+     */
     @Override
     public List<AState> getSolutionPath() {
         return solutionPath;
     }
+
+    /**
+     * Returns the Maze object of the current maze.
+     */
     @Override
     public Maze getMazeObject() {
         return currentMaze;
     }
 
+    /**
+     * Sets the current maze and updates start and goal positions accordingly.
+     */
     @Override
     public void setMaze(Maze maze) {
         this.currentMaze = maze;
@@ -154,10 +183,16 @@ public class MyModel implements IModel {
         this.goalPosition = maze.getGoalPosition();
     }
 
+    /**
+     * Assigns the view component that will receive updates from this model.
+     */
     public void setView(IView view) {
-        this.view = view;
+        //this.view = view;
     }
 
+    /**
+     * Moves the character in the specified direction if the target cell is valid, then updates the view display.
+     */
     public void moveCharacter(String direction) {
         if (currentPosition == null || currentMaze == null) return;
 
@@ -178,9 +213,13 @@ public class MyModel implements IModel {
 
         if (isValidPosition(row, col)) {
             currentPosition = new Position(row, col);
-            if (view != null) view.displayMaze(currentMaze.getMaze());
+            //if (view != null) view.displayMaze(currentMaze.getMaze());
         }
     }
+
+    /**
+     * Checks whether the specified row and column are within bounds and not a wall in the maze.
+     */
     private boolean isValidPosition(int row, int col) {
         return row >= 0 && col >= 0 &&
                 row < currentMaze.getMaze().length &&
@@ -188,11 +227,19 @@ public class MyModel implements IModel {
                 currentMaze.getMaze()[row][col] == 0;
     }
 
+    /**
+     *
+     * @return current position at the maze.
+     */
     @Override
     public Position getCurrentPosition() {
         return currentPosition;
     }
 
+
+    /**
+     * Internally solves the maze in a background thread without notifying the view component.
+     */
     private void solveMazeSilently() {
         if (currentMaze == null) return;
 

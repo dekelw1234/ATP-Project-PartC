@@ -22,7 +22,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.scene.Node;
+
 import java.io.*;
 import java.util.List;
 import javafx.scene.media.AudioClip;
@@ -233,8 +233,6 @@ public class MyViewController implements IView {
             canvas.requestFocus();
         });
     }
-
-
 
 
     private void drawSolution(List<AState> path) {

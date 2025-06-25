@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 import Model.MyModel;
 import ViewModel.MyViewModel;
 
+//handle the events of the welcome screen
+
 public class WelcomeController {
 
     @FXML private TextField rowsInput;
@@ -27,11 +29,11 @@ public class WelcomeController {
                 return;
             }
 
-            // טען את המסך הראשי של המשחק
+            // טעון את המסך הראשי של המשחק
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/MyView.fxml"));
             Pane root = loader.load();
 
-            // צור את המודל והקשרים
+            // עוצר את המודל והקשרים
             MyModel model = new MyModel();
             MyViewModel viewModel = new MyViewModel(model);
             MyViewController controller = loader.getController();
@@ -39,12 +41,12 @@ public class WelcomeController {
             model.setView(controller);
             controller.setViewModel(viewModel);
 
-            // צור את המבוך
+            // יוצר את המבוך
             viewModel.generateMaze(rows, cols);
             controller.displayMaze(viewModel.getMaze());
             controller.requestFocusOnCanvas();
 
-            // הצג את הסצנה
+            // מציג הסצנה
             Stage stage = (Stage)((Button)event.getSource()).getScene().getWindow();
             Scene gameScene = new Scene(root, 800, 600);
 

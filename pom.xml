@@ -16,16 +16,14 @@
     </properties>
 
     <dependencies>
-        <!-- קובץ JAR של חלק ב -->
         <dependency>
             <groupId>com.myproject</groupId>
             <artifactId>ATPProjectJAR</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/ATP-Project-PartB.jar</systemPath>
+            <systemPath>${project.basedir}/lib/ATPProjectJAR.jar</systemPath>
         </dependency>
 
-        <!-- JavaFX 16 -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -44,8 +42,21 @@
     </dependencies>
 
     <build>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.css</include>
+                    <include>**/*.fxml</include>
+                    <include>**/*.png</include>
+                    <include>**/*.jpg</include>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
-            <!-- JavaFX Maven Plugin -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>

@@ -14,20 +14,20 @@ public class GuiMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // ⬅️ הפעלת השרתים
+        // ️ הפעלת השרתים
         mazeGeneratingServer = new Server(5400, 1000, new ServerStrategyGenerateMaze());
         solveSearchProblemServer = new Server(5401, 1000, new ServerStrategySolveSearchProblem());
         mazeGeneratingServer.start();
         solveSearchProblemServer.start();
 
-        // ⬅️ טעינת מסך פתיחה
+        // ️ טעינת מסך פתיחה
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Welcome.fxml"));
         Parent root = loader.load();
-        Scene welcomeScene = new Scene(root, 400, 250);
+        Scene welcomeScene = new Scene(root, 700, 300); //גובה ורוחב מסך פתיחה
 
-        primaryStage.setTitle("ברוך הבא למשימת השמדת הכור!");
+        primaryStage.setTitle("ברוך הבא למשימת השמדת הכור!"); //הכותרת של הstage
         primaryStage.setScene(welcomeScene);
-        primaryStage.show();
+        primaryStage.show(); //תציג את זה
 
         // הפסקת השרתים כשסוגרים את התוכנית
         primaryStage.setOnCloseRequest(e -> {
@@ -37,6 +37,7 @@ public class GuiMain extends Application {
     }
 
     public static void main(String[] args) {
+
         launch(args);
     }
 }
