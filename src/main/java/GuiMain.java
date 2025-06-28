@@ -1,6 +1,6 @@
 import Server.Server;
-import Server.ServerStrategyGenerateMaze;
-import Server.ServerStrategySolveSearchProblem;
+import View.menu.MyViewController;
+import ViewModel.MyViewModel;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,30 +13,25 @@ public class GuiMain extends Application {
     private Server solveSearchProblemServer;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        // ️ הפעלת השרתים
-        mazeGeneratingServer = new Server(5400, 1000, new ServerStrategyGenerateMaze());
-        solveSearchProblemServer = new Server(5401, 1000, new ServerStrategySolveSearchProblem());
-        mazeGeneratingServer.start();
-        solveSearchProblemServer.start();
+    public void start(Stage stage) throws Exception {
 
-        /*
-        // ️ טעינת מסך פתיחה
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Welcome.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/menu.fxml"));
         Parent root = loader.load();
-        Scene welcomeScene = new Scene(root, 700, 300); //גובה ורוחב מסך פתיחה
 
-        primaryStage.setTitle("ברוך הבא למשימת השמדת הכור!"); //הכותרת של הstage
-        primaryStage.setScene(welcomeScene);
-        primaryStage.show(); //תציג את זה
-         */
+        // מחזיק את ה־Controller
+        MyViewController controller = loader.getController();
 
-        // הפסקת השרתים כשסוגרים את התוכנית
-        primaryStage.setOnCloseRequest(e -> {
-            mazeGeneratingServer.stop();
-            solveSearchProblemServer.stop();
-        });
+        // יוצרים את ה־ViewModel (שעושה בפועל את הלוגיקה) ורושמים אותו
+        MyViewModel viewModel = new MyViewModel();
+        controller.addListener(viewModel);
+
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/myStyle.css").toExternalForm());
+
+        stage.setScene(scene);
+        stage.show();
     }
+
 
     public static void main(String[] args) {
 

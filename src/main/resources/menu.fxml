@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+
+<?import javafx.scene.control.Tooltip?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="View.menu.MyViewController"
+            stylesheets="@myStyle.css">
+
+    <!-- ToolBar בראש החלון -->
+    <top>
+        <ToolBar fx:id="mainToolBar" styleClass="tool-bar">
+            <!-- Refresh -->
+            <Button fx:id="refreshBtn" onAction="#onRefresh">
+                <tooltip>
+                    <Tooltip text="Refresh"/>
+                </tooltip>
+                <graphic>
+                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
+                        <image>
+                            <Image url="@/icons/refresh.jpeg"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <!-- Save -->
+            <Button fx:id="saveBtn" onAction="#onSave">
+                <tooltip>
+                    <Tooltip text="Save"/>
+                </tooltip>
+                <graphic>
+                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
+                        <image>
+                            <Image url="@/icons/save.jpeg"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <!-- Load -->
+            <Button fx:id="loadBtn" onAction="#onLoad" >
+                <tooltip>
+                    <Tooltip text="Load Maze"/>
+                </tooltip>
+                <graphic>
+                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
+                        <image>
+                            <Image url="@/icons/load.jpeg"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <!-- Settings -->
+            <Button fx:id="settingsBtn" onAction="#onSettings" >
+                <tooltip>
+                    <Tooltip text="Setting"/>
+                </tooltip>
+                <graphic>
+                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
+                        <image>
+                            <Image url="@/icons/setting.jpeg"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <!-- Exit -->
+            <Button fx:id="exitBtn" onAction="#onExit" >
+                <tooltip>
+                    <Tooltip text="Exit"/>
+                </tooltip>
+                <graphic>
+                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
+                        <image>
+                            <Image url="@/icons/exit.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <!-- Help -->
+            <Button fx:id="helpBtn" onAction="#onHelp" >
+                <tooltip>
+                    <Tooltip text="Help"/>
+                </tooltip>
+                <graphic>
+                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
+                        <image>
+                            <Image url="@/icons/help.jpg"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <!-- About -->
+            <Button fx:id="aboutBtn" onAction="#onAbout">
+                <tooltip>
+                    <Tooltip text="About"/>
+                </tooltip>
+                <graphic>
+                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
+                        <image>
+                            <Image url="@/icons/about.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <!-- Show Solution (Target) -->
+            <Button fx:id="showSolutionBtn" onAction="#onShowSolution" >
+                <tooltip>
+                    <Tooltip text="Show me the solution"/>
+                </tooltip>
+                <graphic>
+                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
+                        <image>
+                            <Image url="@/icons/taget.jpeg"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+        </ToolBar>
+    </top>
+
+
+    <center>
+        <!-- מרכז החלון ריק כרגע -->
+    </center>
+
+</BorderPane>

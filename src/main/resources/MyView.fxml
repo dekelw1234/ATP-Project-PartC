@@ -11,7 +11,7 @@
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="View.MyViewController"
+            fx:controller="View.menu.MyViewController"
             stylesheets="@myStyle.css">
 
     <!-- תפריט עליון ו־כותרת -->
