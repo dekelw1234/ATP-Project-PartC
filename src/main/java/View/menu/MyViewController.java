@@ -2,7 +2,6 @@ package View.menu;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 
 import java.util.ArrayList;
 import java.util.List;

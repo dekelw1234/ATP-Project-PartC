@@ -34,7 +34,7 @@
 
 /* ====== Toolbar ====== */
 .tool-bar {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: #363e46;
     -fx-padding: 10 12;
     -fx-spacing: 8;
     -fx-border-color: transparent transparent #CCCCCC transparent;

@@ -22,7 +22,7 @@ public class GuiMain extends Application {
         MyViewController controller = loader.getController();
 
         // יוצרים את ה־ViewModel (שעושה בפועל את הלוגיקה) ורושמים אותו
-        MyViewModel viewModel = new MyViewModel();
+        MyViewModel viewModel = new MyViewModel(stage);
         controller.addListener(viewModel);
 
         Scene scene = new Scene(root);
