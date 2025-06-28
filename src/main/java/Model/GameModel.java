@@ -1,5 +1,6 @@
 package Model;
 
+import Client.Client;
 import IO.MyDecompressorInputStream;
 import Server.Server;
 import Server.ServerStrategyGenerateMaze;
@@ -7,12 +8,10 @@ import Server.ServerStrategySolveSearchProblem;
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
-import Client.Client;
-import Client.IClientStrategy;
 
 import java.io.*;
 import java.net.InetAddress;
-import java.util.Objects;
+import java.net.ServerSocket;
 import java.util.Properties;
 
 public class GameModel implements IGameModel {
@@ -23,30 +22,60 @@ public class GameModel implements IGameModel {
 
     private int rows;
     private int cols;
+    private int mazeServerPort;
+    private int solverServerPort;
 
-    private static final Server mazeGeneratingServer = new Server(5400, 1000, new ServerStrategyGenerateMaze());
-    private static final Server solveSearchProblemServer = new Server(5401, 1000, new ServerStrategySolveSearchProblem());
+    private static boolean serversStarted = false;
 
-
-    public GameModel( int rows, int cols) {
-        this.rows=rows;
-        this.cols=cols;
-        startServers();
+    public GameModel(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        loadPortsFromConfig();
+        startServersIfAvailable();
     }
 
-    public static void startServers() {
-        mazeGeneratingServer.start();
-        solveSearchProblemServer.start();
+    private void loadPortsFromConfig() {
+        Properties props = new Properties();
+        try (InputStream in = GameModel.class.getResourceAsStream("/config.properties")) {
+            if (in == null) {
+                throw new RuntimeException("config.properties not found in resources");
+            }
+            props.load(in);
+            mazeServerPort = Integer.parseInt(props.getProperty("mazeServerPort", "5400"));
+            solverServerPort = Integer.parseInt(props.getProperty("solverServerPort", "5401"));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load config.properties", e);
+        }
     }
 
+    private void startServersIfAvailable() {
+        if (serversStarted) return;
+
+        try {
+            new ServerSocket(mazeServerPort).close();
+            new ServerSocket(solverServerPort).close();
+        } catch (IOException e) {
+            System.out.println("⚠ Ports already in use. Assuming servers are already running.");
+            serversStarted = true;
+            return;
+        }
+
+        Server mazeServer = new Server(mazeServerPort, 1000, new ServerStrategyGenerateMaze());
+        Server solverServer = new Server(solverServerPort, 1000, new ServerStrategySolveSearchProblem());
+
+        mazeServer.start();
+        solverServer.start();
+        serversStarted = true;
+
+        System.out.println("✅ Maze and Solver servers started on ports " + mazeServerPort + " and " + solverServerPort);
+    }
 
     @Override
     public void generateMaze(int rows, int cols) {
-        this.rows=rows;
-        this.cols=cols;
+        this.rows = rows;
+        this.cols = cols;
         try {
-
-            Client client = new Client(InetAddress.getLocalHost(), 5400, (in, out) -> {
+            Client client = new Client(InetAddress.getLocalHost(), mazeServerPort, (in, out) -> {
                 try {
                     ObjectOutputStream toServer = new ObjectOutputStream(out);
                     ObjectInputStream fromServer = new ObjectInputStream(in);
@@ -58,11 +87,11 @@ public class GameModel implements IGameModel {
 
                     byte[] compressedMaze = (byte[]) fromServer.readObject();
                     InputStream is = new MyDecompressorInputStream(new ByteArrayInputStream(compressedMaze));
-                    byte[] decompressed = new byte[rows * cols + 100]; // לגודל בטוח
+                    byte[] decompressed = new byte[rows * cols + 100];
                     is.read(decompressed);
                     currentMaze = new Maze(decompressed);
                     playerPosition = currentMaze.getStartPosition();
-                    solution = null; // איפוס הפתרון הקודם
+                    solution = null;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -71,6 +100,8 @@ public class GameModel implements IGameModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        new Thread(this::solveMaze).start(); // פתרון ברקע
     }
 
     @Override
@@ -78,7 +109,7 @@ public class GameModel implements IGameModel {
         if (currentMaze == null) return;
 
         try {
-            Client client = new Client(InetAddress.getLocalHost(), 5401, (in, out) -> {
+            Client client = new Client(InetAddress.getLocalHost(), solverServerPort, (in, out) -> {
                 try {
                     ObjectOutputStream toServer = new ObjectOutputStream(out);
                     ObjectInputStream fromServer = new ObjectInputStream(in);
@@ -110,6 +141,10 @@ public class GameModel implements IGameModel {
             case "DOWN" -> row++;
             case "LEFT" -> col--;
             case "RIGHT" -> col++;
+            case "UP_LEFT" -> { row--; col--; }
+            case "UP_RIGHT" -> { row--; col++; }
+            case "DOWN_LEFT" -> { row++; col--; }
+            case "DOWN_RIGHT" -> { row++; col++; }
         }
 
         if (isValidMove(row, col)) {
@@ -143,28 +178,32 @@ public class GameModel implements IGameModel {
         currentMaze = new Maze(data);
         playerPosition = currentMaze.getStartPosition();
     }
-    public static void stopServers() {
-     mazeGeneratingServer.stop();
-     solveSearchProblemServer.stop();
-    }
-
 
     @Override
     public byte[] toByteArray() {
-        return new byte[0]; //todo
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ObjectOutputStream out = new ObjectOutputStream(bos)) {
+            out.writeObject(currentMaze);
+            return bos.toByteArray();
+        } catch (IOException e) {
+            return new byte[0];
+        }
     }
 
     @Override
     public void fromByteArray(byte[] data) {
-        System.out.println("hiii");
-
-        //todo
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data))) {
+            currentMaze = (Maze) in.readObject();
+            playerPosition = currentMaze.getStartPosition();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void restartGame() {
-        //todo
-
+        playerPosition = currentMaze != null ? currentMaze.getStartPosition() : null;
+        solution = null;
     }
 
     @Override
@@ -179,47 +218,40 @@ public class GameModel implements IGameModel {
             throw new RuntimeException("Failed to load config.properties", e);
         }
 
-        String threadPoolSize          = props.getProperty("threadPoolSize", "");
-        String mazeGeneratingAlgorithm = props.getProperty("mazeGeneratingAlgorithm", "");
-        String mazeSearchingAlgorithm  = props.getProperty("mazeSearchingAlgorithm", "");
-
         return new String[]{
-                threadPoolSize,
-                mazeGeneratingAlgorithm,
-                mazeSearchingAlgorithm
+                props.getProperty("threadPoolSize", ""),
+                props.getProperty("mazeGeneratingAlgorithm", ""),
+                props.getProperty("mazeSearchingAlgorithm", "")
         };
-    }
-    /**
-     * מחזיר מחרוזת עם הוראות השימוש במשחק
-     */
-    public String getHelpText() {
-        return """
-    • Goal: From the starting point, find the exit at the edge of the maze.
-    • Allowed moves: You may move only up, down, left, or right.
-    • Controls:
-        – Use the arrow keys (← ↑ ↓ →) to move your character.
-    • Menu buttons:
-        – Refresh (↺): Generate a new maze with the same dimensions.
-        – Save (💾): Save the current maze state to a file.
-        – Load (📂): Load a previously saved maze.
-        – Settings (⚙): Show the current configuration (threadPoolSize, algorithms).
-        – Help (❓): Display this help text.
-        – About (ℹ): Show version info and copyright.
-        – Exit (⇦): Close the application.
-    • Tip:
-        – Plan your route ahead of time to minimize unnecessary turns.
-    Good luck! 🏹
-""";
-
     }
 
     @Override
     public void solve() {
-        System.out.println("show it");
+        solveMaze();
     }
 
     @Override
     public void clearSolution() {
-        System.out.println("remove it");
+        solution = null;
+    }
+
+    public String getHelpText() {
+        return """
+                • Goal: From the starting point, find the exit at the edge of the maze.
+                • Allowed moves: You may move only up, down, left, or right.
+                • Controls:
+                    – Use the arrow keys (← ↑ ↓ →) to move your character.
+                • Menu buttons:
+                    – Refresh (↺): Generate a new maze with the same dimensions.
+                    – Save (💾): Save the current maze state to a file.
+                    – Load (📂): Load a previously saved maze.
+                    – Settings (⚙): Show the current configuration (threadPoolSize, algorithms).
+                    – Help (❓): Display this help text.
+                    – About (ℹ): Show version info and copyright.
+                    – Exit (⇦): Close the application.
+                • Tip:
+                    – Plan your route ahead of time to minimize unnecessary turns.
+                Good luck! 🏹
+                """;
     }
 }

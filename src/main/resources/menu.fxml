@@ -136,7 +136,7 @@
 
     <center>
         <!-- נשתמש ב־Pane כלשהו, למשל StackPane -->
-        <StackPane fx:id="gameContainer"/>
+        <fx:include source="MazeCreationView.fxml"/>
     </center>
 
 

@@ -30,7 +30,7 @@
     <!-- תחתית: סטטוס -->
     <bottom>
         <Label fx:id="statusLabel"
-               text="💬 מבוך בגודל 15x15 נטען כברירת מחדל"
+               text="💬 מבוך נוצר"
                id="statusBar"
                BorderPane.alignment="CENTER"/>
     </bottom>

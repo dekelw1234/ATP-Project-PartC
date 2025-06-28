@@ -33,8 +33,10 @@ public class GameViewModel {
     }
 
     public void generateMaze(int rows, int cols) {
-        model.generateMaze(rows, cols);
-        draw();
+        new Thread(() -> {
+            model.generateMaze(rows, cols);
+            Platform.runLater(this::draw); // ציור בטוח בתוך JavaFX Thread
+        }).start();
     }
 
     public void solveMaze() {
