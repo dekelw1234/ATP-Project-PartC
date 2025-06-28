@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.layout.Priority?>
+<?import java.lang.Double?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="View.WelcomeController"
+            prefWidth="700" prefHeight="500"
+            styleClass="root">
+
+    <!-- לוגו בחלק העליון -->
+    <top>
+        <VBox alignment="CENTER" spacing="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <ImageView fitWidth="150" preserveRatio="true">
+                <image>
+                    <Image url="@/images/logo.png"/>
+                </image>
+            </ImageView>
+        </VBox>
+    </top>
+
+    <!-- תוכן אמצעי: כותרת ושדות קלט -->
+    <center>
+        <VBox fx:id="centerVBox"
+              alignment="CENTER"
+              spacing="20"
+              VBox.vgrow="ALWAYS"
+              styleClass="center-box">
+            <maxWidth>
+
+                <Double fx:value="Infinity"/>
+            </maxWidth>
+        <padding>
+                <Insets top="0" right="40" bottom="0" left="40"/>
+            </padding>
+            <!-- כותרת -->
+            <Label
+                    text="Pilot,&#10;Are you ready to destroy the nuclear bomb in Iran?"
+                    wrapText="true"
+                    textAlignment="CENTER"
+                    alignment="CENTER"
+                    maxWidth="400"
+                    prefWidth="400"
+                    styleClass="title-label"/>
+            <!-- שדות הקלט -->
+            <HBox alignment="CENTER" spacing="30">
+                <VBox spacing="5">
+                    <Label text="Enter number of rows:"/>
+                    <TextField fx:id="rowsField" promptText="For example: 15" prefWidth="120"/>
+                </VBox>
+                <VBox spacing="5">
+                    <Label text="Enter number of columns:"/>
+                    <TextField fx:id="colsField" promptText="For example: 15" prefWidth="120"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </center>
+
+    <!-- כפתור Start בתחתית -->
+    <bottom>
+        <VBox alignment="CENTER">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Button text="Start"
+                    fx:id="startBtn"
+                    onAction="#onStart"
+                    styleClass="button"/>
+        </VBox>
+    </bottom>
+</BorderPane>

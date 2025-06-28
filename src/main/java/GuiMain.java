@@ -1,10 +1,10 @@
 import Server.Server;
-import View.menu.MyViewController;
-import ViewModel.MyViewModel;
+import View.WelcomeController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class GuiMain extends Application {
@@ -15,23 +15,23 @@ public class GuiMain extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/menu.fxml"));
+        //טוענים את ה־welcomePage.fxml
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/welcomePage.fxml") );
         Parent root = loader.load();
 
-        // מחזיק את ה־Controller
-        MyViewController controller = loader.getController();
+        // מאתחלים את ה־Controller (אם צריך להעביר Stage)
+        WelcomeController welcomeCtrl = loader.getController();
+        welcomeCtrl.setPrimaryStage(stage);  // אם כתבת שיטה כזו
 
-        // יוצרים את ה־ViewModel (שעושה בפועל את הלוגיקה) ורושמים אותו
-        MyViewModel viewModel = new MyViewModel(stage);
-        controller.addListener(viewModel);
-
-        Scene scene = new Scene(root);
+        // מצמידים את ה־CSS
+        Scene scene = new Scene(root, 700, 500);
         scene.getStylesheets().add(getClass().getResource("/myStyle.css").toExternalForm());
 
+        // מציגים
         stage.setScene(scene);
+        stage.setTitle("Air Force Maze");
         stage.show();
     }
-
 
     public static void main(String[] args) {
 

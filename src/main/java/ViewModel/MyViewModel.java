@@ -18,9 +18,10 @@ public class MyViewModel implements MyViewListener {
     private final Stage owner;
     private final IModel model;
 
-    public MyViewModel(Stage owner) {
-        this.model = new MyModel(new GameModel());
+    public MyViewModel(Stage owner, int rows, int cols) {
+
         this.owner=owner;
+        this.model = new MyModel(new GameModel(rows, cols));
     }
 
     @Override

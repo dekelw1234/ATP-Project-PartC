@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class GameModel implements IGameModel {
+    public GameModel(int rows, int cols) {
+    }
+
     @Override
     public byte[] toByteArray() {
         return new byte[0]; //todo

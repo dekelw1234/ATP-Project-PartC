@@ -1,54 +1,16 @@
-/* ====== Root Window ====== */
+/* ====== רקע כללי ====== */
 .root {
-    -fx-background-color: #EFEFEF;
-    -fx-border-color: #333333;
-    -fx-border-width: 1;
-    -fx-border-radius: 6;
-    -fx-background-radius: 6;
-}
-
-/* ====== Title Bar ====== */
-.title-bar {
-    -fx-background-color: #56799c;
-    -fx-padding: 8 12;
-    -fx-alignment: center-left;
-    -fx-border-radius: 6 6 0 0;
-    -fx-background-radius: 6 6 0 0;
-}
-.title-bar .label {
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-}
-.title-bar .window-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-padding: 4;
-    -fx-cursor: hand;
-}
-.title-bar .window-button:hover {
-    -fx-background-color: rgba(255,255,255,0.2);
-    -fx-background-radius: 4;
-}
-
-/* ====== Toolbar ====== */
-.tool-bar {
     -fx-background-color: #363e46;
-    -fx-padding: 10 12;
-    -fx-spacing: 8;
-    -fx-border-color: transparent transparent #CCCCCC transparent;
-    -fx-border-width: 0 0 1 0;
 }
 
-/* ====== Icon Buttons ====== */
+/* ====== כפתור ה-Start ====== */
 .button {
     -fx-background-color: white;
     -fx-border-color: #AAAAAA;
     -fx-border-width: 1;
     -fx-border-radius: 4;
     -fx-background-radius: 4;
-    -fx-padding: 8;
+    -fx-padding: 8 16;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);
     -fx-cursor: hand;
 }
@@ -59,22 +21,34 @@
     -fx-background-color: #E8E8E8;
 }
 
-/* Graphic/Icon sizing */
-.button .graphic {
-    -fx-scale-x: 1.2;
-    -fx-scale-y: 1.2;
+/* ====== התווית המרכזית ====== */
+.title-label {
+    -fx-font-family: "Courier New";      /* הפונט הטעון */
+    -fx-font-size: 24px;               /* גודל שמיש */
+    -fx-text-fill: white;              /* צבע הטקסט */
+    -fx-wrap-text: true;               /* שורות ארוכות יתפרקו */
+    -fx-text-alignment: left;          /* יישור הטקסט לשמאל */
+    -fx-alignment: CENTER_LEFT;        /* המכולה (VBox) תיישר גם אותה לשמאל */
+    -fx-max-width: 600px;              /* תקרה לרוחב, כדי שיוכל לעטוף שורות */
 }
 
-/* ====== Layout Panes ====== */
+/* ====== כללית לכל התוויות ====== */
+.root Label {
+    -fx-text-fill: white;
+}
+
+/* ====== שדות הטקסט ====== */
+.text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255,255,255,0.6);
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6 8;
+    -fx-text-fill: white;                      /* הטקסט שהמשתמש מקליד */
+    -fx-prompt-text-fill: rgba(255,255,255,0.6);/* ה-promptText */
+}
+
+/* ====== ריווח בין המכולות ====== */
 .vbox, .hbox {
     -fx-spacing: 10;
-    -fx-padding: 10;
-}
-
-/* ====== Example fx:id for status bar (if needed) ===== */
-#statusBar {
-    -fx-background-color: #FFFFFF;
-    -fx-border-color: #CCCCCC;
-    -fx-border-width: 1 0 0 0;
-    -fx-padding: 6 10;
 }
