@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.BorderPane?>
 
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.StackPane?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="View.menu.MyViewController"
             stylesheets="@myStyle.css">
@@ -134,7 +135,9 @@
 
 
     <center>
-        <!-- מרכז החלון ריק כרגע -->
+        <!-- נשתמש ב־Pane כלשהו, למשל StackPane -->
+        <StackPane fx:id="gameContainer"/>
     </center>
+
 
 </BorderPane>

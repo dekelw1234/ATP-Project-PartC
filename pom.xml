@@ -77,7 +77,7 @@
                 <version>0.0.5</version>
                 <configuration>
                     <!-- מחלקת main שלך -->
-                    <mainClass>View.Main</mainClass>
+                    <mainClass>GuiMain</mainClass>
                 </configuration>
                 <executions>
                     <execution>

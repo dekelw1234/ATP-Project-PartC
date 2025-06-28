@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.scene.layout.BorderPane;
 
 public class WelcomeController {
 
@@ -30,7 +31,14 @@ public class WelcomeController {
 
         //  טען את ה־menu.fxml
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/menu.fxml"));
-        Parent menuRoot = loader.load();
+        BorderPane menuRoot = loader.load();
+
+        // טוענים את ה־MazeCreationView ומכניסים למרכז:
+        FXMLLoader gameLoader = new FXMLLoader(
+                getClass().getResource("/MazeCreationView.fxml")
+        );
+        Parent gameView = gameLoader.load();
+        menuRoot.setCenter(gameView);
 
         // ייבוא ה־Stage ממנו נגיע
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();

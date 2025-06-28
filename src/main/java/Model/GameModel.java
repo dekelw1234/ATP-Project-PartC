@@ -21,9 +21,16 @@ public class GameModel implements IGameModel {
     private Position playerPosition;
     private Solution solution;
 
+    private int rows;
+    private int cols;
+
     private static final Server mazeGeneratingServer = new Server(5400, 1000, new ServerStrategyGenerateMaze());
     private static final Server solveSearchProblemServer = new Server(5401, 1000, new ServerStrategySolveSearchProblem());
-    public GameModel() {
+
+
+    public GameModel( int rows, int cols) {
+        this.rows=rows;
+        this.cols=cols;
         startServers();
     }
 
@@ -35,7 +42,10 @@ public class GameModel implements IGameModel {
 
     @Override
     public void generateMaze(int rows, int cols) {
+        this.rows=rows;
+        this.cols=cols;
         try {
+
             Client client = new Client(InetAddress.getLocalHost(), 5400, (in, out) -> {
                 try {
                     ObjectOutputStream toServer = new ObjectOutputStream(out);
