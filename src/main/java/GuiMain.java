@@ -20,6 +20,7 @@ public class GuiMain extends Application {
         mazeGeneratingServer.start();
         solveSearchProblemServer.start();
 
+        /*
         // ️ טעינת מסך פתיחה
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Welcome.fxml"));
         Parent root = loader.load();
@@ -28,6 +29,7 @@ public class GuiMain extends Application {
         primaryStage.setTitle("ברוך הבא למשימת השמדת הכור!"); //הכותרת של הstage
         primaryStage.setScene(welcomeScene);
         primaryStage.show(); //תציג את זה
+         */
 
         // הפסקת השרתים כשסוגרים את התוכנית
         primaryStage.setOnCloseRequest(e -> {
