@@ -13,6 +13,7 @@ import Client.IClientStrategy;
 import java.io.*;
 import java.net.InetAddress;
 import java.util.Objects;
+import java.util.Properties;
 
 public class GameModel implements IGameModel {
 
@@ -138,6 +139,41 @@ public class GameModel implements IGameModel {
     }
 
 
+    @Override
+    public byte[] toByteArray() {
+        return new byte[0]; //todo
+    }
 
+    public void fromByteArray(byte[] data) {
+        System.out.println("hiii");
 
+        //todo
+    }
+
+    public void restartGame() {
+        //todo
+
+    }
+
+    public String[] settings() {
+        Properties props = new Properties();
+        try (InputStream in = getClass().getResourceAsStream("/config.properties")) {
+            if (in == null) {
+                throw new RuntimeException("config.properties not found in resources");
+            }
+            props.load(in);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load config.properties", e);
+        }
+
+        String threadPoolSize          = props.getProperty("threadPoolSize", "");
+        String mazeGeneratingAlgorithm = props.getProperty("mazeGeneratingAlgorithm", "");
+        String mazeSearchingAlgorithm  = props.getProperty("mazeSearchingAlgorithm", "");
+
+        return new String[]{
+                threadPoolSize,
+                mazeGeneratingAlgorithm,
+                mazeSearchingAlgorithm
+        };
+    }
 }

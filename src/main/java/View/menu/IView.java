@@ -1,4 +1,4 @@
-package View;
+package View.menu;
 
 public interface IView {
 }
