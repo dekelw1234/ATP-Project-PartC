@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import View.MazeDisplayer?>
+
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns="http://javafx.com/javafx/16"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="View.GameController"
+            stylesheets="@/myStyle.css">
+
+    <!-- כותרת עליונה -->
+    <top>
+        <HBox spacing="10" alignment="CENTER" styleClass="title-bar">
+            <Label text="🔒 מבוך גרעיני" styleClass="label"/>
+        </HBox>
+    </top>
+
+    <!-- מרכז: ציור המבוך -->
+    <center>
+        <StackPane>
+            <padding>
+                <Insets top="12" right="12" bottom="12" left="12"/>
+            </padding>
+            <MazeDisplayer fx:id="mazeDisplayer" width="600" height="600" styleClass="maze-canvas"/>
+        </StackPane>
+
+    </center>
+
+    <!-- תחתית: סטטוס -->
+    <bottom>
+        <Label fx:id="statusLabel"
+               text="💬 מבוך בגודל 15x15 נטען כברירת מחדל"
+               id="statusBar"
+               BorderPane.alignment="CENTER"/>
+    </bottom>
+
+</BorderPane>
