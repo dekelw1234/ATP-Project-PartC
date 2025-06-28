@@ -14,6 +14,21 @@
     <!-- ToolBar בראש החלון -->
     <top>
         <ToolBar fx:id="mainToolBar" styleClass="tool-bar">
+
+            <!-- Show Solution (Target) -->
+            <Button fx:id="showSolutionBtn" onAction="#onShowSolution" >
+                <tooltip>
+                    <Tooltip text="Show me the solution"/>
+                </tooltip>
+                <graphic>
+                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
+                        <image>
+                            <Image url="@/icons/taget.jpeg"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
             <!-- Refresh -->
             <Button fx:id="refreshBtn" onAction="#onRefresh">
                 <tooltip>
@@ -56,6 +71,7 @@
                 </graphic>
             </Button>
 
+
             <!-- Settings -->
             <Button fx:id="settingsBtn" onAction="#onSettings" >
                 <tooltip>
@@ -65,34 +81,6 @@
                     <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
                         <image>
                             <Image url="@/icons/setting.jpeg"/>
-                        </image>
-                    </ImageView>
-                </graphic>
-            </Button>
-
-            <!-- Exit -->
-            <Button fx:id="exitBtn" onAction="#onExit" >
-                <tooltip>
-                    <Tooltip text="Exit"/>
-                </tooltip>
-                <graphic>
-                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
-                        <image>
-                            <Image url="@/icons/exit.png"/>
-                        </image>
-                    </ImageView>
-                </graphic>
-            </Button>
-
-            <!-- Help -->
-            <Button fx:id="helpBtn" onAction="#onHelp" >
-                <tooltip>
-                    <Tooltip text="Help"/>
-                </tooltip>
-                <graphic>
-                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
-                        <image>
-                            <Image url="@/icons/help.jpg"/>
                         </image>
                     </ImageView>
                 </graphic>
@@ -112,21 +100,37 @@
                 </graphic>
             </Button>
 
-            <!-- Show Solution (Target) -->
-            <Button fx:id="showSolutionBtn" onAction="#onShowSolution" >
+            <!-- Help -->
+            <Button fx:id="helpBtn" onAction="#onHelp" >
                 <tooltip>
-                    <Tooltip text="Show me the solution"/>
+                    <Tooltip text="Help"/>
                 </tooltip>
                 <graphic>
                     <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
                         <image>
-                            <Image url="@/icons/taget.jpeg"/>
+                            <Image url="@/icons/help.jpg"/>
                         </image>
                     </ImageView>
                 </graphic>
             </Button>
+
+            <!-- Exit -->
+            <Button fx:id="exitBtn" onAction="#onExit" >
+                <tooltip>
+                    <Tooltip text="Exit"/>
+                </tooltip>
+                <graphic>
+                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
+                        <image>
+                            <Image url="@/icons/exit.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
         </ToolBar>
     </top>
+
 
 
     <center>

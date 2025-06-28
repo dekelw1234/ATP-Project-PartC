@@ -9,4 +9,10 @@ public interface IGameModel {
     void restartGame();
 
     String[] settings();
+
+    String getHelpText();
+
+    void solve();
+
+    void clearSolution();
 }

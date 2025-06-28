@@ -48,4 +48,37 @@ public class GameModel implements IGameModel {
                 mazeSearchingAlgorithm
         };
     }
+    /**
+     * מחזיר מחרוזת עם הוראות השימוש במשחק
+     */
+    public String getHelpText() {
+        return """
+    • Goal: From the starting point, find the exit at the edge of the maze.
+    • Allowed moves: You may move only up, down, left, or right.
+    • Controls:
+        – Use the arrow keys (← ↑ ↓ →) to move your character.
+    • Menu buttons:
+        – Refresh (↺): Generate a new maze with the same dimensions.
+        – Save (💾): Save the current maze state to a file.
+        – Load (📂): Load a previously saved maze.
+        – Settings (⚙): Show the current configuration (threadPoolSize, algorithms).
+        – Help (❓): Display this help text.
+        – About (ℹ): Show version info and copyright.
+        – Exit (⇦): Close the application.
+    • Tip:
+        – Plan your route ahead of time to minimize unnecessary turns.
+    Good luck! 🏹
+""";
+
+    }
+
+    @Override
+    public void solve() {
+        System.out.println("show it");
+    }
+
+    @Override
+    public void clearSolution() {
+        System.out.println("remove it");
+    }
 }

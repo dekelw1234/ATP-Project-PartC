@@ -11,7 +11,8 @@ public interface IModel {
     void load(File file) throws FileNotFoundException;
     String[] settings();
     void exit();
-    void help();
-    void about();
+    String help();
+    void  about();
     void showSolution();
+    void hideSolution();
 }

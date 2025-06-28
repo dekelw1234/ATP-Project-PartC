@@ -1,10 +1,6 @@
 package Model;
-
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-
 import java.io.*;
-import java.util.Properties;
+
 
 public class MyModel implements IModel {
 
@@ -57,8 +53,8 @@ public class MyModel implements IModel {
     }
 
     @Override
-    public void help() {
-        System.out.println("Model: help()");
+    public String help() {
+        return gameModel.getHelpText();
     }
 
     @Override
@@ -68,6 +64,12 @@ public class MyModel implements IModel {
 
     @Override
     public void showSolution() {
-        System.out.println("Model: showSolution()");
+        //Generate the solution path inside the GameModel
+        gameModel.solve();
+    }
+
+    @Override
+    public void hideSolution() {
+        gameModel.clearSolution();  // remove path overlay
     }
 }
