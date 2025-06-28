@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.dekelw</groupId>
@@ -16,6 +16,7 @@
     </properties>
 
     <dependencies>
+        <!-- תלות לקובץ ה-JAR מהתיקייה lib -->
         <dependency>
             <groupId>com.myproject</groupId>
             <artifactId>ATPProjectJAR</artifactId>
@@ -24,6 +25,7 @@
             <systemPath>${project.basedir}/lib/ATPProjectJAR.jar</systemPath>
         </dependency>
 
+        <!-- JavaFX dependencies -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -42,27 +44,29 @@
     </dependencies>
 
     <build>
-
+        <!-- לוודא שמשאבים כמו FXML ו־PNG מועתקים -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>**/*.css</include>
                     <include>**/*.fxml</include>
                     <include>**/*.png</include>
                     <include>**/*.jpg</include>
+                    <include>**/*.css</include>
                     <include>**/*.properties</include>
                 </includes>
             </resource>
         </resources>
 
         <plugins>
+            <!-- פלאגין להרצת JavaFX -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.5</version>
                 <configuration>
-                    <mainClass>GuiMain</mainClass>
+                    <!-- מחלקת main שלך -->
+                    <mainClass>View.Main</mainClass>
                 </configuration>
                 <executions>
                     <execution>
