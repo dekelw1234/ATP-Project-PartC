@@ -1,46 +1,76 @@
 package View;
 
-import Model.GameModel;
 import ViewModel.GameViewModel;
+import ViewModel.MyViewModel;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import Model.GameModel;
 
 public class Main extends Application {
+
+    private Stage primaryStage;
+
     @Override
     public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/MazeCreationView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/StartScreen.fxml"));
             Parent root = loader.load();
 
-            GameModel.startServers(); // הפעלת השרתים
+            // קישור לבקר
+            StartScreenController controller = loader.getController();
+            controller.setPrimaryStage(primaryStage);
+            controller.setMainApp(this); // 👈 חשוב מאוד!
 
-            GameModel model = new GameModel();
-            GameViewModel viewModel = new GameViewModel(model, primaryStage);
-            GameController controller = loader.getController();
-            controller.setViewModel(viewModel);
+            // יצירת סצנה
+            Scene scene = new Scene(root, 400, 300);
+            scene.getStylesheets().add(getClass().getResource("/myStyle.css").toExternalForm());
 
-            Scene scene = new Scene(root, 800, 700);
+            primaryStage.setTitle("🌀 התחלת משחק מבוך");
             primaryStage.setScene(scene);
-            primaryStage.setTitle("מבוך גרעיני");
+            primaryStage.show();
 
-            // 🛑 עצירת שרתים עם סגירת החלון
-            primaryStage.setOnCloseRequest(event -> {
-                System.out.println("🔚 סוגרים את האפליקציה...");
-                GameModel.stopServers(); // ודא שקיימת המתודה
-                Platform.exit();
+            // 📌 סגירת שרתים ויציאה
+            primaryStage.setOnCloseRequest(e -> {
+                System.out.println("📴 סוגר את השרתים והתהליכים...");
+                GameModel.stopServers();
                 System.exit(0);
             });
 
-            primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * קריאה מתוך StartScreenController לצורך מעבר למסך המשחק
+     */
+    public void loadGameView(int rows, int cols, byte[] mazeData) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GameAndMenu.fxml"));
+            Parent root = loader.load();
+
+            GameAndMenuController controller = loader.getController();
+
+            GameViewModel gameVM = new GameViewModel(new GameModel(), primaryStage);
+            MyViewModel menuVM = new MyViewModel(primaryStage);
+
+            controller.init(gameVM, menuVM, rows, cols, mazeData);
+
+            Scene gameScene = new Scene(root, 1000, 700);
+            gameScene.getStylesheets().add(getClass().getResource("/myStyle.css").toExternalForm());
+
+            primaryStage.setScene(gameScene);
+            primaryStage.setTitle("🧩 משחק מבוך גרעיני");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         launch(args);

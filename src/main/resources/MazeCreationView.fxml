@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import View.MazeDisplayer?>
 
+<?import javafx.geometry.Insets?>
 <BorderPane xmlns="http://javafx.com/javafx/16"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="View.GameController"
@@ -17,12 +18,13 @@
 
     <!-- מרכז: ציור המבוך -->
     <center>
-        <StackPane padding="12">
-            <MazeDisplayer fx:id="mazeDisplayer"
-                           width="600"
-                           height="600"
-                           styleClass="maze-canvas"/>
+        <StackPane>
+            <padding>
+                <Insets top="12" right="12" bottom="12" left="12"/>
+            </padding>
+            <MazeDisplayer fx:id="mazeDisplayer" width="600" height="600" styleClass="maze-canvas"/>
         </StackPane>
+
     </center>
 
     <!-- תחתית: סטטוס -->

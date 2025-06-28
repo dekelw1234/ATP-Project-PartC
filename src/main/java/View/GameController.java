@@ -16,16 +16,21 @@ public class GameController {
 
     private GameViewModel viewModel;
 
-    public void setViewModel(GameViewModel vm) {
+    public void setViewModel(GameViewModel vm, int rows, int cols, boolean generateNew) {
         this.viewModel = vm;
         mazeDisplayer.setFocusTraversable(true);
         mazeDisplayer.setOnKeyPressed(this::handleKeyPressed);
-
-        // יצירת מבוך ברירת מחדל
         viewModel.setCanvas(mazeDisplayer);
-        viewModel.generateMaze(15, 15); // גודל ברירת מחדל
+
+        if (generateNew) {
+            viewModel.generateMaze(rows, cols);
+        } else {
+            viewModel.draw(); // אם טען קובץ
+        }
+
         updateDisplay();
     }
+
 
     private void handleKeyPressed(KeyEvent event) {
         switch (event.getCode()) {

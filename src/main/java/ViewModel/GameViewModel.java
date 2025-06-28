@@ -141,4 +141,10 @@ public class GameViewModel {
     public Solution getSolution() {
         return model.getSolution();
     }
+
+    public void loadMazeFromBytes(byte[] data) {
+        model.loadMaze(data);
+        draw();
+    }
+
 }
