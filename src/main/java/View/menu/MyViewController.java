@@ -37,6 +37,7 @@ public class MyViewController {
 
     @FXML
     public void onSettings(ActionEvent event) {
+
         listeners.forEach(MyViewListener::onSettings);
     }
 

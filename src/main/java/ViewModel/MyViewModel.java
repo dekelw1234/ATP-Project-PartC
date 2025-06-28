@@ -4,11 +4,12 @@ import Model.GameModel;
 import Model.IModel;
 import Model.MyModel;
 import View.menu.MyViewListener;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 
@@ -59,26 +60,34 @@ public class MyViewModel implements MyViewListener {
 
     @Override
     public void onSettings() {
-        model.settings();
+        String[] cfg = model.settings();
+        String content = String.join("\n", cfg); //מחבר את המחרוזות
+
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, content, ButtonType.OK); //מציג תיבת מידע עם הכותרת
+            alert.setTitle("Application Settings");
+            alert.setHeaderText("Current configuration");
+            alert.showAndWait();
+        });
     }
 
     @Override
     public void onExit() {
-        model.exit();
+        model.exit(); //todo שיחזור למסך וולקום
     }
 
     @Override
     public void onHelp() {
-        model.help();
+        model.help();//todo
     }
 
     @Override
     public void onAbout() {
-        model.about();
+        model.about(); //todo
     }
 
     @Override
     public void onShowSolution() {
-        model.showSolution();
+        model.showSolution(); //todo
     }
 }

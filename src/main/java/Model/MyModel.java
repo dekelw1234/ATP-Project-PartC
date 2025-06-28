@@ -4,6 +4,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.util.Properties;
 
 public class MyModel implements IModel {
 
@@ -46,8 +47,8 @@ public class MyModel implements IModel {
     }
 
     @Override
-    public void settings() {
-        System.out.println("Model: settings()");
+    public String[] settings() {
+        return gameModel.settings(); //מחזיר קובץ קונפיגורציה שרלוונטי למשחק שנטען
     }
 
     @Override

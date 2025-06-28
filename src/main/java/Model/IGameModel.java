@@ -7,4 +7,6 @@ public interface IGameModel {
     void fromByteArray(byte[] data);
 
     void restartGame();
+
+    String[] settings();
 }
