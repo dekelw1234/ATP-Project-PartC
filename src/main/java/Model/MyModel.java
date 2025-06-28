@@ -72,4 +72,10 @@ public class MyModel implements IModel {
     public void hideSolution() {
         gameModel.clearSolution();  // remove path overlay
     }
+
+
+    public GameModel getGameModel() {
+        return gameModel;
+    }
+
 }

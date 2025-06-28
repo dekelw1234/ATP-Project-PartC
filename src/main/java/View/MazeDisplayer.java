@@ -9,6 +9,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
+import java.io.InputStream;
+
 public class MazeDisplayer extends Canvas {
     private Maze maze;
     private Position playerPosition;
@@ -69,21 +71,32 @@ public class MazeDisplayer extends Canvas {
             }
         }
 
-        // 🎯 יעד (כור)
+// 🎯 יעד (כור)
         if (goalPosition != null) {
+            double x = goalPosition.getColumnIndex() * cellWidth;
+            double y = goalPosition.getRowIndex() * cellHeight;
+
+            System.out.println("📍 goalPosition: " + goalPosition);
+            System.out.println("🧮 Goal draw coords: x=" + x + ", y=" + y + ", size=" + cellWidth + "x" + cellHeight);
+
             try {
-                Image goalImage = new Image(getClass().getResourceAsStream("/images/core.png"));
-                gc.drawImage(goalImage,
-                        goalPosition.getColumnIndex() * cellWidth,
-                        goalPosition.getRowIndex() * cellHeight,
-                        cellWidth, cellHeight);
+                InputStream imageStream = getClass().getResourceAsStream("/images/core.png");
+                if (imageStream == null) {
+                    System.err.println("❌ core.png not found in /images/");
+                    gc.setFill(Color.ORANGE);
+                    gc.fillRect(x, y, cellWidth, cellHeight);
+                } else {
+                    Image goalImage = new Image(imageStream);
+                    System.out.println("✅ core.png loaded successfully");
+                    gc.drawImage(goalImage, x, y, cellWidth, cellHeight);
+                }
             } catch (Exception e) {
+                System.err.println("⚠️ Exception while drawing core.png: " + e.getMessage());
                 gc.setFill(Color.RED);
-                gc.fillOval(goalPosition.getColumnIndex() * cellWidth,
-                        goalPosition.getRowIndex() * cellHeight,
-                        cellWidth, cellHeight);
+                gc.fillOval(x, y, cellWidth, cellHeight);
             }
         }
+
 
         // ✈️ שחקן
         try {

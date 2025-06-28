@@ -1,6 +1,7 @@
 package View;
 
 import View.menu.MyViewController;
+import ViewModel.GameViewModel;
 import ViewModel.MyViewModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,8 +10,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
 public class WelcomeController {
 
@@ -24,35 +25,33 @@ public class WelcomeController {
 
     @FXML
     public void onStart(ActionEvent event) throws Exception {
-
         // קבלת ערכי שורות ועמודות מהמשתמש
         int rows = Integer.parseInt(rowsField.getText());
         int cols = Integer.parseInt(colsField.getText());
 
-        //  טען את ה־menu.fxml
+        // טען את ה־menu.fxml
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/menu.fxml"));
         BorderPane menuRoot = loader.load();
 
-        // טוענים את ה־MazeCreationView ומכניסים למרכז:
-        FXMLLoader gameLoader = new FXMLLoader(
-                getClass().getResource("/MazeCreationView.fxml")
-        );
+        // טען את MazeCreationView.fxml והכנס אותו למרכז התצוגה
+        FXMLLoader gameLoader = new FXMLLoader(getClass().getResource("/MazeCreationView.fxml"));
         Parent gameView = gameLoader.load();
         menuRoot.setCenter(gameView);
 
-        // ייבוא ה־Stage ממנו נגיע
+        // הצמדת סצנה חדשה ל־Stage
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-
-        // קבע לו את הסצנה החדשה
         Scene menuScene = new Scene(menuRoot);
         menuScene.getStylesheets().add(getClass().getResource("/myStyle.css").toExternalForm());
         stage.setScene(menuScene);
 
-        // התחברות בין Controller ל־ViewModel עם הגדרות המשחק
-        MyViewController menuController = loader.getController();
-
-        // תוכל להעביר rows/cols ל־GameModel בתוך ה־ViewModel
+        // יצירת ViewModel מרכזי
         MyViewModel vm = new MyViewModel(stage, rows, cols);
+        MyViewController menuController = loader.getController();
         menuController.addListener(vm);
+
+        // חיבור בין GameController ל־GameViewModel
+        GameController gameController = gameLoader.getController();
+        GameViewModel gameViewModel = new GameViewModel(vm.getModel(), stage);
+        gameController.setViewModel(gameViewModel, rows, cols, true);
     }
 }

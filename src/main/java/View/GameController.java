@@ -27,8 +27,6 @@ public class GameController {
         } else {
             viewModel.draw(); // אם טען קובץ
         }
-
-        updateDisplay();
     }
 
 

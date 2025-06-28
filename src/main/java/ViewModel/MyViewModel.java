@@ -1,6 +1,7 @@
 package ViewModel;
 
 import Model.GameModel;
+import Model.IGameModel;
 import Model.IModel;
 import Model.MyModel;
 import View.menu.MyViewListener;
@@ -122,4 +123,16 @@ public class MyViewModel implements MyViewListener {
         }
         solutionVisible = !solutionVisible;
     }
+
+    public IGameModel getModel() {
+        if (model instanceof MyModel) {
+            MyModel myModel = (MyModel) model;
+            return myModel.getGameModel();  // זה מחזיר GameModel שמממש IGameModel
+        }
+        throw new IllegalStateException("Model is not of type MyModel");
+    }
+
+
+
+
 }
