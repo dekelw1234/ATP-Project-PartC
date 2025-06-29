@@ -12,7 +12,7 @@
 
     <!-- כותרת עליונה -->
     <top>
-        <HBox spacing="10" alignment="CENTER" styleClass="title-bar">
+        <HBox spacing="10" alignment="CENTER" styleClass="title-bar" VBox.vgrow="ALWAYS">
             <Label text="🔒 מבוך גרעיני" styleClass="label"/>
         </HBox>
     </top>

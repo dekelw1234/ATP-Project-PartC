@@ -24,6 +24,8 @@ public class GuiMain extends Application {
         // מאתחלים את ה־Controller (אם צריך להעביר Stage)
         WelcomeController welcomeCtrl = loader.getController();
         welcomeCtrl.setPrimaryStage(stage);  // אם כתבת שיטה כזו
+        stage.sizeToScene();        // מגדיר את החלון לגודל התוכן
+        stage.setResizable(true);   // מאפשר שינוי גודל ידני
 
         // מצמידים את ה־CSS
         Scene scene = new Scene(root, 700, 500);
