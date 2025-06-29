@@ -24,15 +24,15 @@ public class WelcomeController {
     @FXML private TextField rowsField;
     @FXML private TextField colsField;
     private Stage primaryStage;
-    private MediaPlayer bgPlayer;
+    //private MediaPlayer bgPlayer;
 
     public void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;
     }
 
-    /**
+    /*
      * מתודה שתופעל אוטומטית ברגע שה-FXML נטען.
-     */
+
     @FXML
     private void initialize() {
         try {
@@ -52,6 +52,7 @@ public class WelcomeController {
             e.printStackTrace();
         }
     }
+     */
 
     @FXML
     public void onStart(ActionEvent event) throws Exception {

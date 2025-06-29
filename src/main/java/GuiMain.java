@@ -15,6 +15,8 @@ public class GuiMain extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
+        View.BackgroundMusic.init(); //מפעיל מוזיקה
+
         //טוענים את ה־welcomePage.fxml
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/welcomePage.fxml") );
         Parent root = loader.load();
