@@ -55,6 +55,7 @@
                     <include>**/*.css</include>
                     <include>**/*.jpeg</include>
                     <include>**/*.properties</include>
+                    <include>**/*.m4a</include>
                 </includes>
             </resource>
         </resources>

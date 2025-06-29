@@ -12,19 +12,49 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+import java.net.URL;
+
 
 public class WelcomeController {
 
     @FXML private TextField rowsField;
     @FXML private TextField colsField;
     private Stage primaryStage;
+    private MediaPlayer bgPlayer;
 
     public void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;
     }
 
+    /**
+     * מתודה שתופעל אוטומטית ברגע שה-FXML נטען.
+     */
+    @FXML
+    private void initialize() {
+        try {
+
+            URL mediaUrl = getClass().getResource("/music/videoplayback.m4a");
+            if (mediaUrl == null) {
+                System.err.println("ERROR: cannot find /music/videoplayback.m4a on classpath");
+                return;
+            }
+            System.out.println(">> Found music at: " + mediaUrl);
+            Media bg = new Media(mediaUrl.toExternalForm());
+            bgPlayer = new MediaPlayer(bg);
+            bgPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            bgPlayer.play();
+            System.out.println("Background music started");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     public void onStart(ActionEvent event) throws Exception {
+
         // קבלת ערכי שורות ועמודות מהמשתמש
         int rows = Integer.parseInt(rowsField.getText());
         int cols = Integer.parseInt(colsField.getText());
