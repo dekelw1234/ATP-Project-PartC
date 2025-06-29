@@ -32,6 +32,14 @@ public class GameViewModel {
         showSolution = true;
     }
 
+    public void toggleSolution() {
+        showSolution = !showSolution;
+    }
+
+    public void setSolutionVisible(boolean visible) {
+        this.showSolution = visible;
+    }
+
     public void movePlayer(String direction) {
         model.movePlayer(direction);
     }
@@ -79,16 +87,9 @@ public class GameViewModel {
         return showSolution ? model.getSolution() : null;
     }
 
-    public void loadMazeFromBytes(byte[] data) {
-        model.loadMaze(data);
-        showSolution = false;
-    }
-
     public boolean isSolutionVisible() {
         return showSolution;
     }
 
-    public void hideSolution() {
-        showSolution = false;
-    }
+
 }

@@ -2,7 +2,6 @@ package Model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Properties;
 
 public interface IModel {
 

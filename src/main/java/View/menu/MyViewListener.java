@@ -1,5 +1,7 @@
 package View.menu;
 
+import algorithms.search.Solution;
+
 public interface MyViewListener {
     void onRefresh();
     void onSave();
@@ -9,5 +11,7 @@ public interface MyViewListener {
     void onHelp();
     void onAbout();
     void onShowSolution();
+    void onSolutionToggled(Solution solution, boolean visible);
+
 }
 

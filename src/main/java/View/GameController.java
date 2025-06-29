@@ -2,8 +2,8 @@ package View;
 
 import ViewModel.GameViewModel;
 import View.menu.MyViewListener;
-import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -14,13 +14,14 @@ import javafx.scene.media.MediaPlayer;
 
 import java.net.URL;
 
-public class GameController {
+public class GameController implements MyViewListener {
 
     @FXML
     private MazeDisplayer mazeDisplayer;
+
     private MediaPlayer bgPlayer;
     private GameViewModel viewModel;
-    private MyViewListener menuListener; // נוספה תמיכה בלחצני הטולבר
+    private MyViewListener menuListener;
 
     @FXML
     public void initialize() {
@@ -60,65 +61,67 @@ public class GameController {
         updateDisplay();
         mazeDisplayer.requestFocus();
 
-        // בדיקת ניצחון
-        Position player = viewModel.getPlayerPosition();
-        Position goal = viewModel.getMaze().getGoalPosition();
-        if (player.equals(goal)) {
+        if (viewModel.getPlayerPosition().equals(viewModel.getMaze().getGoalPosition())) {
             showVictoryMessage();
         }
     }
 
     private void showVictoryMessage() {
-
-        //מוזיקת ניצחון
-        View.BackgroundMusic.stop(); //עצירת מוזיקת רקע
+        BackgroundMusic.stop();
         try {
-
             URL mediaUrl = getClass().getResource("/music/victory.m4a");
-            if (mediaUrl == null) {
-                System.err.println("ERROR: cannot find /music/victory.m4a on classpath");
-                return;
+            if (mediaUrl != null) {
+                Media bg = new Media(mediaUrl.toExternalForm());
+                bgPlayer = new MediaPlayer(bg);
+                bgPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+                bgPlayer.play();
             }
-            System.out.println(">> Found music at: " + mediaUrl);
-            Media bg = new Media(mediaUrl.toExternalForm());
-            bgPlayer = new MediaPlayer(bg);
-            bgPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            bgPlayer.play();
-            System.out.println("victory music started");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Victory!");
-        alert.setHeaderText("🎉 You destroyed the nuclear reactor in Iran!!");
-        alert.setContentText("You saved the State of Israel, thank you! \n What do you want to do now?");
+        alert.setHeaderText("You destroyed the nuclear bomb of Iran!!");
+        alert.setContentText("You saved the State of Israel, thank you! \nWhat do you want to do now?");
 
-        ButtonType saveBtn = new ButtonType("Sava this maze");
+        ButtonType saveBtn = new ButtonType("Save this maze");
         ButtonType exitBtn = new ButtonType("Back");
         ButtonType cancelBtn = new ButtonType("Cancel");
 
         alert.getButtonTypes().setAll(saveBtn, exitBtn, cancelBtn);
 
         alert.showAndWait().ifPresent(response -> {
-            // בכל מקרה – ברגע שהדיאלוג נסגר, נעצור את מוזיקת הניצחון:
             if (bgPlayer != null) {
                 bgPlayer.stop();
             }
-            // ונפעיל מחדש את מוזיקת הרקע:
             BackgroundMusic.play();
 
-            // עכשיו בהתאם לכפתור:
             if (response == saveBtn && menuListener != null) {
                 menuListener.onSave();
             } else if (response == exitBtn && menuListener != null) {
                 menuListener.onExit();
             }
-            // אם response == cancelBtn – לא עושים פעולה נוספת
         });
     }
 
     public MazeDisplayer getMazeDisplayer() {
         return mazeDisplayer;
     }
+
+    @Override
+    public void onSolutionToggled(Solution solution, boolean visible) {
+        viewModel.setSolutionVisible(visible);
+        mazeDisplayer.setSolution(solution);
+        mazeDisplayer.redraw();
+    }
+
+    @Override public void onRefresh() {}
+    @Override public void onSave() {}
+    @Override public void onLoad() {}
+    @Override public void onSettings() {}
+    @Override public void onExit() {}
+    @Override public void onHelp() {}
+    @Override public void onAbout() {}
+    @Override public void onShowSolution() {}
 }

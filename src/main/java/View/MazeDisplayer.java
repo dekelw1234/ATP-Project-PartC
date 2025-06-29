@@ -34,9 +34,12 @@ public class MazeDisplayer extends Canvas {
     }
 
     public void setSolution(Solution solution) {
+        System.out.println(">>> setSolution called. Solution is " +
+                (solution == null ? "null" : "size: " + solution.getSolutionPath().size()));
         this.solution = solution;
         redraw();
     }
+
 
     public void redraw() {
         if (maze == null || playerPosition == null) return;

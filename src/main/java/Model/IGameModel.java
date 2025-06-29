@@ -22,7 +22,6 @@ public interface IGameModel {
 
     String getHelpText();
 
-    void solve();
 
     void clearSolution();
 }

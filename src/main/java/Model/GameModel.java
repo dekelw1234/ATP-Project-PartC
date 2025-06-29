@@ -8,6 +8,7 @@ import Server.ServerStrategySolveSearchProblem;
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
+import javafx.application.Platform;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -55,7 +56,6 @@ public class GameModel implements IGameModel {
             new ServerSocket(mazeServerPort).close();
             new ServerSocket(solverServerPort).close();
         } catch (IOException e) {
-            System.out.println("⚠ Ports already in use. Assuming servers are already running.");
             serversStarted = true;
             return;
         }
@@ -66,8 +66,6 @@ public class GameModel implements IGameModel {
         mazeServer.start();
         solverServer.start();
         serversStarted = true;
-
-        System.out.println("✅ Maze and Solver servers started on ports " + mazeServerPort + " and " + solverServerPort);
     }
 
     @Override
@@ -81,8 +79,7 @@ public class GameModel implements IGameModel {
                     ObjectInputStream fromServer = new ObjectInputStream(in);
                     toServer.flush();
 
-                    int[] dimensions = new int[]{rows, cols};
-                    toServer.writeObject(dimensions);
+                    toServer.writeObject(new int[]{rows, cols});
                     toServer.flush();
 
                     byte[] compressedMaze = (byte[]) fromServer.readObject();
@@ -91,7 +88,6 @@ public class GameModel implements IGameModel {
                     is.read(decompressed);
                     currentMaze = new Maze(decompressed);
                     playerPosition = currentMaze.getStartPosition();
-                    solution = null;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -101,7 +97,12 @@ public class GameModel implements IGameModel {
             e.printStackTrace();
         }
 
-        new Thread(this::solveMaze).start(); // פתרון ברקע
+        new Thread(() -> {
+            solveMaze();
+            if (solution != null) {
+                Platform.runLater(() -> {});
+            }
+        }).start();
     }
 
     @Override
@@ -195,6 +196,7 @@ public class GameModel implements IGameModel {
         try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data))) {
             currentMaze = (Maze) in.readObject();
             playerPosition = currentMaze.getStartPosition();
+            solveMaze();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -226,13 +228,8 @@ public class GameModel implements IGameModel {
     }
 
     @Override
-    public void solve() {
-        solveMaze();
-    }
-
-    @Override
     public void clearSolution() {
-        solution = null;
+        // intentionally left blank
     }
 
     public String getHelpText() {
@@ -242,16 +239,13 @@ public class GameModel implements IGameModel {
                 • Controls:
                     – Use the arrow keys (← ↑ ↓ →) to move your character.
                 • Menu buttons:
-                    – Refresh (↺): Generate a new maze with the same dimensions.
-                    – Save (💾): Save the current maze state to a file.
-                    – Load (📂): Load a previously saved maze.
-                    – Settings (⚙): Show the current configuration (threadPoolSize, algorithms).
-                    – Help (❓): Display this help text.
-                    – About (ℹ): Show version info and copyright.
-                    – Exit (⇦): Close the application.
-                • Tip:
-                    – Plan your route ahead of time to minimize unnecessary turns.
-                Good luck! 🏹
+                    – Refresh: Generate a new maze with the same dimensions.
+                    – Save: Save the current maze state to a file.
+                    – Load: Load a previously saved maze.
+                    – Settings: Show the current configuration.
+                    – Help: Display this help text.
+                    – About: Show version info.
+                    – Exit: Close the application.
                 """;
     }
 }

@@ -5,15 +5,17 @@ import Model.IGameModel;
 import Model.IModel;
 import Model.MyModel;
 import View.menu.MyViewListener;
+import algorithms.search.Solution;
 import javafx.application.Platform;
-import javafx.geometry.NodeOrientation;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyViewModel implements MyViewListener {
 
@@ -21,10 +23,10 @@ public class MyViewModel implements MyViewListener {
     private final IModel model;
     private Runnable returnToWelcomeCallback;
     private boolean solutionVisible = false;
+    private final List<MyViewListener> listeners = new ArrayList<>();
 
     public MyViewModel(Stage owner, int rows, int cols) {
-
-        this.owner=owner;
+        this.owner = owner;
         this.model = new MyModel(new GameModel(rows, cols));
     }
 
@@ -35,15 +37,13 @@ public class MyViewModel implements MyViewListener {
 
     @Override
     public void onSave() {
-
-        //זה כאן כי זה מתעסק בUI של שמירה לקובץ
-        FileChooser fc = new FileChooser(); //האפשרות לפתוח את בחירת הקבצים
-        fc.setTitle("Save Game"); //הכותרת של החלוןש יפתח
-        File file = fc.showSaveDialog(owner); //מחזיר את הנתיב שנבחר אם נבחר
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Save Game");
+        File file = fc.showSaveDialog(owner);
         if (file == null) return;
 
         try {
-            model.save(file); //כתיבת המשחק לקובץ - לוגיקה
+            model.save(file);
         } catch (IOException e) {
             System.out.println("Couldn't save the game");
         }
@@ -66,10 +66,10 @@ public class MyViewModel implements MyViewListener {
     @Override
     public void onSettings() {
         String[] cfg = model.settings();
-        String content = String.join("\n", cfg); //מחבר את המחרוזות
+        String content = String.join("\n", cfg);
 
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, content, ButtonType.OK); //מציג תיבת מידע עם הכותרת
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, content, ButtonType.OK);
             alert.setTitle("Application Settings");
             alert.setHeaderText("Current configuration");
             alert.showAndWait();
@@ -89,14 +89,13 @@ public class MyViewModel implements MyViewListener {
 
     @Override
     public void onHelp() {
-        // שולפים את הטקסט מה־Model
         String helpText = model.help();
 
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, helpText, ButtonType.OK);
             alert.setTitle("Help");
             alert.setHeaderText("How to Play");
-            alert.getDialogPane().setMinWidth(600); // אפשר להגדיר רוחב מינימלי
+            alert.getDialogPane().setMinWidth(600);
             alert.showAndWait();
         });
     }
@@ -116,23 +115,30 @@ public class MyViewModel implements MyViewListener {
 
     @Override
     public void onShowSolution() {
-        if (!solutionVisible) {
-            model.showSolution();   // tell the model to compute & draw it
-        } else {
-            model.hideSolution();   // tell the model to clear it
-        }
         solutionVisible = !solutionVisible;
+
+        IGameModel gameModel = getModel();
+        Solution solution = solutionVisible ? gameModel.getSolution() : null;
+
+        listeners.forEach(l -> l.onSolutionToggled(solution, solutionVisible));
     }
+
+    public void addListener(MyViewListener listener) {
+        listeners.add(listener);
+    }
+
 
     public IGameModel getModel() {
         if (model instanceof MyModel) {
             MyModel myModel = (MyModel) model;
-            return myModel.getGameModel();  // זה מחזיר GameModel שמממש IGameModel
+            return myModel.getGameModel();
         }
         throw new IllegalStateException("Model is not of type MyModel");
     }
-
-
+    @Override
+    public void onSolutionToggled(Solution solution, boolean visible) {
+        // אפשר להשאיר ריק אם MyViewModel לא צריך להגיב לפעולה הזו
+    }
 
 
 }
