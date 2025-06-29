@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import View.MazeDisplayer?>
-
 <?import javafx.geometry.Insets?>
+<?import View.MazeDisplayer?>  <!-- חובה לייבא את המחלקה שלך -->
+
 <BorderPane xmlns="http://javafx.com/javafx/16"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="View.GameController"
@@ -16,15 +17,14 @@
         </HBox>
     </top>
 
-    <!-- מרכז: ציור המבוך -->
+    <!-- מרכז: MazeDisplayer כולל אירוע מקש -->
     <center>
-        <StackPane>
-            <padding>
-                <Insets top="12" right="12" bottom="12" left="12"/>
-            </padding>
-            <MazeDisplayer fx:id="mazeDisplayer" width="600" height="600" styleClass="maze-canvas"/>
-        </StackPane>
-
+        <MazeDisplayer fx:id="mazeDisplayer"
+                       width="600"
+                       height="600"
+                       BorderPane.alignment="CENTER"
+                       styleClass="maze-canvas"
+                       onKeyPressed="#handleKeyPressed"/>
     </center>
 
     <!-- תחתית: סטטוס -->

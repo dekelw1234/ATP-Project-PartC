@@ -17,14 +17,19 @@ public class MazeDisplayer extends Canvas {
     private Position goalPosition;
     private Solution solution;
 
+    public MazeDisplayer() {
+        this.setFocusTraversable(true);
+        this.setOnMouseClicked(e -> this.requestFocus());
+    }
+
     public void setMaze(Maze maze) {
         this.maze = maze;
-        this.goalPosition = maze.getGoalPosition(); // היעד מתוך המבוך
+        this.goalPosition = maze.getGoalPosition();
         redraw();
     }
 
-    public void setPlayerPosition(Position pos) {
-        this.playerPosition = pos;
+    public void setPlayerPosition(Position position) {
+        this.playerPosition = position;
         redraw();
     }
 
@@ -33,7 +38,7 @@ public class MazeDisplayer extends Canvas {
         redraw();
     }
 
-    private void redraw() {
+    public void redraw() {
         if (maze == null || playerPosition == null) return;
 
         int[][] grid = maze.getMaze();
@@ -43,16 +48,22 @@ public class MazeDisplayer extends Canvas {
         GraphicsContext gc = getGraphicsContext2D();
         gc.clearRect(0, 0, getWidth(), getHeight());
 
-        // 🎨 רקע כללי
-        try {
-            Image bg = new Image(getClass().getResourceAsStream("/images/maze_background.jpg"));
-            gc.drawImage(bg, 0, 0, getWidth(), getHeight());
+        // רקע
+        try (InputStream bgStream = getClass().getResourceAsStream("/images/maze_background.jpg")) {
+            if (bgStream != null) {
+                Image bg = new Image(bgStream);
+                gc.drawImage(bg, 0, 0, getWidth(), getHeight());
+            } else {
+                gc.setFill(Color.DARKSLATEGRAY);
+                gc.fillRect(0, 0, getWidth(), getHeight());
+            }
         } catch (Exception e) {
-            System.err.println("⚠️ לא נמצא maze_background.jpg");
+            gc.setFill(Color.DARKGRAY);
+            gc.fillRect(0, 0, getWidth(), getHeight());
         }
 
-        // 🧱 קירות
-        gc.setFill(Color.rgb(0, 0, 0, 0.4)); // שקוף חלקית
+        // קירות – אפור שקוף
+        gc.setFill(Color.rgb(60, 60, 60, 0.8));
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 if (grid[i][j] == 1)
@@ -60,9 +71,9 @@ public class MazeDisplayer extends Canvas {
             }
         }
 
-        // 🟢 פתרון (אם קיים)
+        // פתרון
         if (solution != null) {
-            gc.setFill(Color.LIGHTGREEN);
+            gc.setFill(Color.rgb(144, 238, 144, 0.6)); // ירוק בהיר שקוף
             for (AState state : solution.getSolutionPath()) {
                 String[] parts = state.getStateView().split(",");
                 int row = Integer.parseInt(parts[0].replaceAll("[^\\d]", ""));
@@ -71,45 +82,50 @@ public class MazeDisplayer extends Canvas {
             }
         }
 
-// 🎯 יעד (כור)
-        if (goalPosition != null) {
-            double x = goalPosition.getColumnIndex() * cellWidth;
-            double y = goalPosition.getRowIndex() * cellHeight;
-
-            System.out.println("📍 goalPosition: " + goalPosition);
-            System.out.println("🧮 Goal draw coords: x=" + x + ", y=" + y + ", size=" + cellWidth + "x" + cellHeight);
-
-            try {
-                InputStream imageStream = getClass().getResourceAsStream("/images/core.png");
-                if (imageStream == null) {
-                    System.err.println("❌ core.png not found in /images/");
-                    gc.setFill(Color.ORANGE);
-                    gc.fillRect(x, y, cellWidth, cellHeight);
-                } else {
-                    Image goalImage = new Image(imageStream);
-                    System.out.println("✅ core.png loaded successfully");
-                    gc.drawImage(goalImage, x, y, cellWidth, cellHeight);
-                }
-            } catch (Exception e) {
-                System.err.println("⚠️ Exception while drawing core.png: " + e.getMessage());
-                gc.setFill(Color.RED);
-                gc.fillOval(x, y, cellWidth, cellHeight);
-            }
-        }
-
-
-        // ✈️ שחקן
+        // שחקן
         try {
-            Image playerImg = new Image(getClass().getResourceAsStream("/images/plane.png"));
-            gc.drawImage(playerImg,
-                    playerPosition.getColumnIndex() * cellWidth,
-                    playerPosition.getRowIndex() * cellHeight,
-                    cellWidth, cellHeight);
+            InputStream playerStream = getClass().getResourceAsStream("/images/plane.png");
+            if (playerStream != null) {
+                Image playerImg = new Image(playerStream);
+                gc.drawImage(playerImg,
+                        playerPosition.getColumnIndex() * cellWidth,
+                        playerPosition.getRowIndex() * cellHeight,
+                        cellWidth, cellHeight);
+            } else {
+                gc.setFill(Color.BLUE);
+                gc.fillOval(playerPosition.getColumnIndex() * cellWidth,
+                        playerPosition.getRowIndex() * cellHeight,
+                        cellWidth, cellHeight);
+            }
         } catch (Exception e) {
             gc.setFill(Color.BLUE);
             gc.fillOval(playerPosition.getColumnIndex() * cellWidth,
                     playerPosition.getRowIndex() * cellHeight,
                     cellWidth, cellHeight);
+        }
+
+        // יעד
+        if (goalPosition != null) {
+            try {
+                InputStream goalStream = getClass().getResourceAsStream("/images/core.png");
+                if (goalStream != null) {
+                    Image goalImg = new Image(goalStream);
+                    gc.drawImage(goalImg,
+                            goalPosition.getColumnIndex() * cellWidth,
+                            goalPosition.getRowIndex() * cellHeight,
+                            cellWidth, cellHeight);
+                } else {
+                    gc.setFill(Color.RED);
+                    gc.fillOval(goalPosition.getColumnIndex() * cellWidth,
+                            goalPosition.getRowIndex() * cellHeight,
+                            cellWidth, cellHeight);
+                }
+            } catch (Exception e) {
+                gc.setFill(Color.RED);
+                gc.fillOval(goalPosition.getColumnIndex() * cellWidth,
+                        goalPosition.getRowIndex() * cellHeight,
+                        cellWidth, cellHeight);
+            }
         }
     }
 }
