@@ -3,6 +3,7 @@ package View;
 import View.menu.MyViewController;
 import ViewModel.GameViewModel;
 import ViewModel.MyViewModel;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -83,5 +84,9 @@ public class WelcomeController {
         GameController gameController = gameLoader.getController();
         GameViewModel gameViewModel = new GameViewModel(vm.getModel(), stage);
         gameController.setViewModel(gameViewModel, rows, cols, true);
+        gameController.setMenuListener(vm);
+        Platform.runLater(() -> gameController.getMazeDisplayer().requestFocus());
+
+
     }
 }
