@@ -30,20 +30,6 @@
                 </graphic>
             </Button>
 
-            <!-- Refresh -->
-            <Button fx:id="refreshBtn" onAction="#onRefresh">
-                <tooltip>
-                    <Tooltip text="Refresh"/>
-                </tooltip>
-                <graphic>
-                    <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
-                        <image>
-                            <Image url="@/icons/refresh.jpeg"/>
-                        </image>
-                    </ImageView>
-                </graphic>
-            </Button>
-
             <!-- Save -->
             <Button fx:id="saveBtn" onAction="#onSave">
                 <tooltip>
